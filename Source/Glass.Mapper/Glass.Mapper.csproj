@@ -75,6 +75,9 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IDataContext.cs" />
     <Compile Include="MapperException.cs" />
+    <Compile Include="ObjectCaching\Implementations\CacheTable.cs" />
+    <Compile Include="ObjectCaching\IObjectCache.cs" />
+    <Compile Include="ObjectCaching\ObjectCache.cs" />
     <Compile Include="Pipelines\AbstractPipelineArgs.cs" />
     <Compile Include="Pipelines\AbstractPipelineRunner.cs" />
     <Compile Include="Pipelines\ConfigurationResolver\ConfigurationResolverArgs.cs" />
@@ -85,6 +88,11 @@
     <Compile Include="Pipelines\DataMapperResolver\DataMapperResolver.cs" />
     <Compile Include="Pipelines\DataMapperResolver\IDataMapperResolverTask.cs" />
     <Compile Include="Pipelines\IPipelineTask.cs" />
+    <Compile Include="Pipelines\ObjectCaching\IObjectCachingTask.cs" />
+    <Compile Include="Pipelines\ObjectCaching\ObjectCachingArgs.cs" />
+    <Compile Include="Pipelines\ObjectCaching\ObjectCachingException.cs" />
+    <Compile Include="Pipelines\ObjectCaching\ObjectCachingRunner.cs" />
+    <Compile Include="Pipelines\ObjectCaching\Tasks\ObjectCachingTask.cs" />
     <Compile Include="Pipelines\ObjectConstruction\IObjectConstructionTask.cs" />
     <Compile Include="Pipelines\ObjectConstruction\ObjectConstructionException.cs" />
     <Compile Include="Pipelines\ObjectConstruction\ObjectConstruction.cs" />

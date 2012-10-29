@@ -9,6 +9,8 @@ using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateInterface;
 using Glass.Mapper.Pipelines.TypeResolver;
 using Glass.Mapper.Pipelines.TypeResolver.Tasks.StandardResolver;
 using Glass.Mapper.Pipelines.DataMapperResolver;
+using Glass.Mapper.ObjectCaching;
+using Glass.Mapper.ObjectCaching.Implementations;
 
 namespace Glass.Mapper
 {
@@ -98,7 +100,9 @@ namespace Glass.Mapper
         /// <summary>
         /// The list of DataMappers used when loading configurations
         /// </summary>
-        public IList<AbstractDataMapper> DataMappers { get; set; } 
+        public IList<AbstractDataMapper> DataMappers { get; set; }
+
+        public IObjectCache Cache { get; private set; }
 
         private Context()
         {
@@ -107,6 +111,8 @@ namespace Glass.Mapper
             ConfigurationResolverTasks = new List<IConfigurationResolverTask>();
             TypeConfigurations = new Dictionary<Type, AbstractTypeConfiguration>();
             DataMappers = new List<AbstractDataMapper>();
+
+            Cache = new CacheTable();
         }
 
         /// <summary>
