@@ -17,6 +17,7 @@ namespace Glass.Mapper.Configuration.Attributes
         /// Indicates that the results should be loaded lazily
         /// </summary>
         public bool IsLazy { get; set; }
+
         /// <summary>
         /// Indicates that the field is relative to the current item.
         /// </summary>
@@ -33,7 +34,7 @@ namespace Glass.Mapper.Configuration.Attributes
             Query = query;
         }
 
-        public void Configure(PropertyInfo propertyInfo, QueryConfiguration config)
+        public  void Configure(PropertyInfo propertyInfo, QueryConfiguration config)
         {
             config.Query = this.Query;
             config.IsLazy = this.IsLazy;

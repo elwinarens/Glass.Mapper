@@ -54,15 +54,23 @@
     <Compile Include="Configuration\Attributes\SitecoreNodeAttribute.cs" />
     <Compile Include="Configuration\Attributes\SitecoreParentAttribute.cs" />
     <Compile Include="Configuration\SitecoreChildrenConfiguration.cs" />
+    <Compile Include="Configuration\SitecoreFieldConfiguration.cs" />
     <Compile Include="Configuration\SitecoreFieldSettings.cs" />
+    <Compile Include="Configuration\SitecoreFieldType.cs" />
+    <Compile Include="Configuration\SitecoreIdConfiguration.cs" />
+    <Compile Include="Configuration\SitecoreInfoConfiguration.cs" />
     <Compile Include="Configuration\SitecoreInfoType.cs" />
     <Compile Include="Configuration\SitecoreInfoUrlOptions.cs" />
+    <Compile Include="Configuration\SitecoreLinkedConfiguration.cs" />
     <Compile Include="Configuration\SitecoreLinkedOptions.cs" />
+    <Compile Include="Configuration\SitecoreNodeConfiguration.cs" />
+    <Compile Include="Configuration\SitecoreParentConfiguration.cs" />
+    <Compile Include="Configuration\SitecoreQueryConfiguration.cs" />
     <Compile Include="Configuration\SitecoreTypeConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="FieldTypes\" />
+    <Folder Include="Configuration\FieldTypes\" />
     <Folder Include="Pipelines\ContentResolver\" />
     <Folder Include="Pipelines\MappingPipeline\" />
     <Folder Include="Pipelines\ObjectConstruction\" />
