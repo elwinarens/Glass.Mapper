@@ -91,7 +91,6 @@
     <Compile Include="Pipelines\ObjectCaching\IObjectCachingTask.cs" />
     <Compile Include="Pipelines\ObjectCaching\ObjectCachingArgs.cs" />
     <Compile Include="Pipelines\ObjectCaching\ObjectCachingException.cs" />
-    <Compile Include="Pipelines\ObjectCaching\ObjectCachingRunner.cs" />
     <Compile Include="Pipelines\ObjectCaching\Tasks\ObjectCachingTask.cs" />
     <Compile Include="Pipelines\ObjectConstruction\IObjectConstructionTask.cs" />
     <Compile Include="Pipelines\ObjectConstruction\ObjectConstructionException.cs" />

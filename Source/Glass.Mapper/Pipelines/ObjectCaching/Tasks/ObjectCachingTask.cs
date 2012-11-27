@@ -9,16 +9,9 @@ namespace Glass.Mapper.Pipelines.ObjectCaching.Tasks
 {
     public class ObjectCachingTask : IObjectCachingTask
     {
-        private IObjectConstructionTask _objectConstructionTask;
-
-        public ObjectCachingTask()
-        {
-            _objectConstructionTask = new CreateConcreteTask();
-        }
-
         public void Execute(ObjectCachingArgs args)
         {
-            _objectConstructionTask.Execute(args as ObjectConstructionArgs);
+            args.ObjectConstructionTask.Execute(args as ObjectConstructionArgs);
         }
     }
 }
