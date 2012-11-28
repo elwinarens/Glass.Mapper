@@ -66,10 +66,12 @@
     <Compile Include="AbstractDataMapperFixture.cs" />
     <Compile Include="ContextFixture.cs" />
     <Compile Include="ExtensionMethodFixture.cs" />
+    <Compile Include="Caching\CacheKeyResolverFixture.cs" />
     <Compile Include="Pipelines\ConfigurationResolver\Tasks\StandardResolver\ConfigurationStandardResolverTaskFixture.cs" />
-    <Compile Include="Pipelines\ObjectCaching\Tasks\ObjectCachingTaskFixture.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateConcrete\LazyObjectInterceptorFixture.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateInterface\CreateInterfaceTaskFixture.cs" />
+    <Compile Include="Pipelines\ObjectConstruction\Tasks\ObjectCachingResolver\ObjectCachingResolverTaskFixture.cs" />
+    <Compile Include="Pipelines\ObjectConstruction\Tasks\ObjectCachingSaver\ObjectCachingSaverTaskFixture.cs" />
     <Compile Include="UtilitiesFixture.cs" />
     <Compile Include="Pipelines\AbstractPipelineRunnerFixture.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateConcrete\CreateConcreteTaskFixture.cs" />

@@ -72,6 +72,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateInterface
             Assert.IsTrue(args.IsAborted);
             Assert.IsTrue(args.Result is IStubInterface);
             Assert.IsFalse(args.Result.GetType() == typeof(IStubInterface));
+            Assert.IsTrue(ObjectOrigin.CreateInterface == args.ObjectOrigin);
         }
 
         [Test]

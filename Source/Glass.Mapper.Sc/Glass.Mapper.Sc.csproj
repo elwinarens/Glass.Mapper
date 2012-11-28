@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\CacheKeyResolving\Implementations\SitecoreCacheKeyResolver.cs" />
     <Compile Include="Configuration\Attributes\SitecoreAttributeConfigurationLoader.cs" />
     <Compile Include="Configuration\Attributes\SitecoreChildrenAttribute.cs" />
     <Compile Include="Configuration\Attributes\SitecoreQueryAttribute.cs" />
