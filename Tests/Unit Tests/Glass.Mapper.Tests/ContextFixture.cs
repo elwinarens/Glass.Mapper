@@ -11,10 +11,19 @@ namespace Glass.Mapper.Tests
     [TestFixture]
     public class ContextFixture
     {
+        private IGlassConfiguration _glassConfig;
+
         [TearDown]
         public void TearDown()
         {
             Context.Clear();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            _glassConfig = Substitute.For<IGlassConfiguration>();
+            Context.ResolverFactory = Substitute.For<IDependencyResolverFactory>();
         }
 
         #region Create
@@ -28,7 +37,7 @@ namespace Glass.Mapper.Tests
             Context.Clear();
 
             //Act
-            Context.Create(contextName, isDefault);
+            Context.Create(_glassConfig, contextName, isDefault);
 
             //Assert
             Assert.IsTrue(Context.Contexts.ContainsKey(contextName));
@@ -44,7 +53,7 @@ namespace Glass.Mapper.Tests
             bool isDefault = true;
 
             //Act
-            Context.Create(contextName, isDefault);
+            Context.Create(_glassConfig, contextName, isDefault);
 
             //Assert
             Assert.IsTrue(Context.Contexts.ContainsKey(contextName));
@@ -59,11 +68,11 @@ namespace Glass.Mapper.Tests
             //Assign
 
             //Act
-            Context.Create();
+            Context.Create(_glassConfig);
             
             //Assert
             Assert.IsNotNull(Context.Default);
-            Assert.AreEqual(Context.Contexts[Context.DefaultName], Context.Default);
+            Assert.AreEqual(Context.Contexts[Context.DefaultContextName], Context.Default);
         }
         
         #endregion
@@ -85,52 +94,17 @@ namespace Glass.Mapper.Tests
             loader2.Load().Returns(new[] { config2 });
 
             //Act
-            var context = Context.Create();
+            var context = Context.Create(_glassConfig);
             context.Load(loader1, loader2);
 
             //Assert
             Assert.IsNotNull(Context.Default);
-            Assert.AreEqual(Context.Contexts[Context.DefaultName], Context.Default);
+            Assert.AreEqual(Context.Contexts[Context.DefaultContextName], Context.Default);
             Assert.AreEqual(config1, Context.Default.TypeConfigurations[config1.Type]);
             Assert.AreEqual(config2, Context.Default.TypeConfigurations[config2.Type]);
         }
 
-        [Test]
-        public void Load_LoadContextAndDataMappers_ConfigurationContainsDataMappers()
-        {
-            //Assign
-            var loader1 = Substitute.For<IConfigurationLoader>();
-            var config1 = Substitute.For<AbstractTypeConfiguration>();
-            var propertyConfig = Substitute.For<AbstractPropertyConfiguration>();
-            var dataMapper = new StubAbstractDataMapper();
-
-            dataMapper.CanHandleFunction = (x => x == propertyConfig);
-
-            config1.Type = typeof(StubClass1);
-            config1.AddProperty(propertyConfig);
-            loader1.Load().Returns(new[] { config1 });
-
-            var loader2 = Substitute.For<IConfigurationLoader>();
-            var config2 = Substitute.For<AbstractTypeConfiguration>();
-            config2.Type = typeof(StubClass2);
-            loader2.Load().Returns(new[] { config2 });
-
-            var context = Context.Create();
-            context.DataMappers.Add(dataMapper);
-
-            //Act
-            context.Load(loader1, loader2);
-
-            //Assert
-            Assert.IsNotNull(Context.Default);
-            Assert.AreEqual(Context.Contexts[Context.DefaultName], Context.Default);
-            Assert.AreEqual(config1, Context.Default.TypeConfigurations[config1.Type]);
-            Assert.AreEqual(config2, Context.Default.TypeConfigurations[config2.Type]);
-
-            Assert.AreEqual(dataMapper, propertyConfig.Mapper);
-            
-
-        }
+        
 
         #endregion
 
@@ -146,13 +120,14 @@ namespace Glass.Mapper.Tests
             loader1.Load().Returns(new[] { config1 });
 
 
+
             //Act
-            var context = Context.Create();
+            var context = Context.Create(_glassConfig);
             context.Load(loader1);
 
             //Assert
             Assert.IsNotNull(Context.Default);
-            Assert.AreEqual(Context.Contexts[Context.DefaultName], Context.Default);
+            Assert.AreEqual(Context.Contexts[Context.DefaultContextName], Context.Default);
             Assert.AreEqual(config1, Context.Default[config1.Type]);
         }
 
@@ -162,12 +137,12 @@ namespace Glass.Mapper.Tests
             var loader1 = Substitute.For<IConfigurationLoader>();
 
             //Act
-            var context = Context.Create();
+            var context = Context.Create(_glassConfig);
             context.Load(loader1);
 
             //Assert
             Assert.IsNotNull(Context.Default);
-            Assert.AreEqual(Context.Contexts[Context.DefaultName], Context.Default);
+            Assert.AreEqual(Context.Contexts[Context.DefaultContextName], Context.Default);
             Assert.IsNull( Context.Default[typeof(StubClass1)]);
         }
 
@@ -193,12 +168,14 @@ namespace Glass.Mapper.Tests
                 return CanHandleFunction(configuration);
             }
 
-            public override object MapToCms(AbstractDataMappingContext mappingContext)
+
+
+            public override void MapToCms(AbstractDataMappingContext mappingContext)
             {
                 throw new NotImplementedException();
             }
 
-            public override object MapFromCms(AbstractDataMappingContext mappingContext)
+            public override object MapToProperty(AbstractDataMappingContext mappingContext)
             {
                 throw new NotImplementedException();
             }

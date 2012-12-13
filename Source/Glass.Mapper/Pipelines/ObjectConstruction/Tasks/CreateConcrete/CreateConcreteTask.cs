@@ -33,7 +33,7 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
                 return;
             }
 
-            if(args.DataContext.IsLazy)
+            if(args.AbstractTypeCreationContext.IsLazy)
             {
                 //here we create a lazy loaded version of the class
                 args.Result = CreateLazyObject(args);
@@ -47,6 +47,8 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
                 args.Result = CreateObject(args);
                 args.ObjectOrigin = ObjectOrigin.CreateConcrete;
                 args.AbortPipeline();
+
+                
             }
         }
 
@@ -59,7 +61,7 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         {
             var configuration = args.Configuration;
             var type = configuration.Type;
-            var constructorParameters = args.DataContext.ConstructorParameters;
+            var constructorParameters = args.AbstractTypeCreationContext.ConstructorParameters;
 
             var parameters = 
                 constructorParameters == null || !constructorParameters.Any() ? Type.EmptyTypes : constructorParameters.Select(x => x.GetType()).ToArray();
@@ -76,14 +78,10 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
             
             var obj = conMethod.DynamicInvoke(parameters);
 
-            //map from the CMS to the object
-            AbstractDataMappingContext dataContext = new AbstractDataMappingContext();
-            dataContext.Object = obj;
-            //TODO: setup the context
-            // args.Configuration.Properties.ForEach(x=>x.)
-            // args.Configuration..DataMappers.ForEach(x => x.MapFromCms(dataContext));
-
-            return dataContext.Object;
+            //create properties 
+            AbstractDataMappingContext dataMappingContext =  args.Service.CreateDataMappingContext(args.AbstractTypeCreationContext, obj);
+            args.Configuration.Properties.ForEach(x => x.Mapper.MapCmsToProperty(dataMappingContext));
+            return obj;
         }
     }
 }

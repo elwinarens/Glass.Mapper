@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Glass.Mapper.CastleWindsor;
 using Glass.Mapper.Configuration;
 using Glass.Mapper.Pipelines.ConfigurationResolver;
 using Glass.Mapper.Pipelines.ObjectConstruction;
@@ -17,12 +18,17 @@ namespace Glass.Mapper
     /// </summary>
     public class Context
     {
-        public const string DefaultName = "Default";
+        public const string DefaultContextName = "Default";
 
         #region STATICS
 
+        public static IDependencyResolverFactory ResolverFactory { get; set; }
+
+       
+
         static Context()
         {
+            ResolverFactory = new CastleDependencyResolverFactory();
             Contexts = new Dictionary<string, Context>();
         }
 
@@ -36,13 +42,14 @@ namespace Glass.Mapper
         /// </summary>
         public static IDictionary<string, Context> Contexts { get; private set; }
 
+        
 
         /// <summary>
         /// Creates a Context and creates it as the default Context. This is assigned to the Default static property.
         /// </summary>
-        public static Context Create()
+        public static Context Create(IGlassConfiguration glassConfig)
         {
-            return Context.Create(DefaultName, true);
+            return Context.Create(glassConfig, DefaultContextName, true);
         }
 
         /// <summary>
@@ -51,12 +58,18 @@ namespace Glass.Mapper
         /// <param name="contextName">The context name, used as the key in the Contexts dictionary.</param>
         /// <param name="isDefault">Indicates if this is the default context. If it is the context is assigned to the Default static property.</param>
         /// <returns></returns>
-        public static Context Create(string contextName, bool isDefault = false)
+        public static Context Create(IGlassConfiguration glassConfig, string contextName, bool isDefault = false)
         {
-            var context = new Context();
 
-            Contexts[contextName] = context;
+            if (glassConfig == null)
+                throw new NullReferenceException("No GlassConfig set. Set the static property Context.GlassConfig");
+
+            var context = new Context();
+            context.DependencyResolver = ResolverFactory.GetResolver();
+            context.DependencyResolver.Load(contextName, glassConfig);
             
+            Contexts[contextName] = context;
+
             if (isDefault)
                 Default = context;
 
@@ -81,32 +94,13 @@ namespace Glass.Mapper
         public IDictionary<Type, AbstractTypeConfiguration> TypeConfigurations { get; private set; }
 
         /// <summary>
-        /// The list of tasks to be performed by the Object Construction Pipeline. Called in the order specified.
+        /// The dependency resolver used by services using the context
         /// </summary>
-        public IList<IObjectConstructionTask> ObjectConstructionTasks { get; private set; }
-        
-        /// <summary>
-        /// The list of tasks to be performed by the Type Resolver Pipeline. Called in the order specified.
-        /// </summary>
-        public IList<ITypeResolverTask> TypeResolverTasks { get; private set; }
-
-        /// <summary>
-        /// The list of tasks to be performed by the Configuration Resolver Pipeline. Called in the order specified.
-        /// </summary>
-        public IList<IConfigurationResolverTask> ConfigurationResolverTasks { get; private set; }
-
-        /// <summary>
-        /// The list of DataMappers used when loading configurations
-        /// </summary>
-        public IList<AbstractDataMapper> DataMappers { get; set; }
+        public IDependencyResolver DependencyResolver { get; set; }
 
         private Context()
         {
-            ObjectConstructionTasks = new List<IObjectConstructionTask>();
-            TypeResolverTasks = new List<ITypeResolverTask>();
-            ConfigurationResolverTasks = new List<IConfigurationResolverTask>();
             TypeConfigurations = new Dictionary<Type, AbstractTypeConfiguration>();
-            DataMappers = new List<AbstractDataMapper>();
         }
 
         /// <summary>
@@ -133,22 +127,25 @@ namespace Glass.Mapper
                 var typeConfigurations = loaders
                     .Select(loader => loader.Load()).Aggregate((x, y) => x.Union(y));
 
-                DataMapperResolver runner = new DataMapperResolver(this.DataMappers);
                 foreach (var typeConfig in typeConfigurations)
                 {
-                    ProcessProperties(runner, typeConfig.Properties);
+                    ProcessProperties(typeConfig.Properties);
                     TypeConfigurations.Add(typeConfig.Type, typeConfig);
                 }
             }
 
         }
-        private void ProcessProperties(DataMapperResolver runner, IEnumerable<AbstractPropertyConfiguration> properties )
+
+        private void ProcessProperties(IEnumerable<AbstractPropertyConfiguration> properties )
         {
+            DataMapperResolver runner = new DataMapperResolver(DependencyResolver.ResolveAll<IDataMapperResolverTask>());
+
             foreach(var property in properties)
             {
+
                 DataMapperResolverArgs args = new DataMapperResolverArgs(this, property);
                 args.PropertyConfiguration = property;
-
+                args.DataMappers = DependencyResolver.ResolveAll<AbstractDataMapper>();
                 runner.Run(args);
                 if(args.Result == null)
                 {
@@ -157,15 +154,8 @@ namespace Glass.Mapper
                         .Formatted(property.PropertyInfo.Name,property.PropertyInfo.ReflectedType.FullName));
                 }
                 property.Mapper = args.Result;
+                property.Mapper.Setup(property);
             }
         }
-
-       
-
-
-
     }
-
-
-    
 }

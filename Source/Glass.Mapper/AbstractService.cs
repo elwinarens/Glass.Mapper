@@ -9,13 +9,30 @@ using Glass.Mapper.Pipelines.ConfigurationResolver;
 
 namespace Glass.Mapper
 {
-    public abstract class  AbstractService <T> where T : IDataContext
+    public abstract class AbstractService<TK> : IAbstractService
+        where TK : AbstractDataMappingContext
     {
-        private Context _context;
+        protected Context GlassContext { get; set; }
+
+        /// <summary>
+        /// The list of tasks to be performed by the Object Construction Pipeline. Called in the order specified.
+        /// </summary>
+        private IEnumerable<IObjectConstructionTask> ObjectConstructionTasks { get; set; }
+
+        /// <summary>
+        /// The list of tasks to be performed by the Type Resolver Pipeline. Called in the order specified.
+        /// </summary>
+        private IEnumerable<ITypeResolverTask> TypeResolverTasks { get; set; }
+
+        /// <summary>
+        /// The list of tasks to be performed by the Configuration Resolver Pipeline. Called in the order specified.
+        /// </summary>
+        private IEnumerable<IConfigurationResolverTask> ConfigurationResolverTasks { get; set; }
 
         public AbstractService()
-            :this(Context.Default)
+            : this(Context.Default)
         {
+
         }
 
         public AbstractService(string contextName)
@@ -23,37 +40,78 @@ namespace Glass.Mapper
         {
         }
 
-        public AbstractService(Context context)
+        public AbstractService(Context glassContext)
         {
-            _context = context;
-            if (_context == null) throw new NullReferenceException("Context is null");
+            GlassContext = glassContext;
+            if (GlassContext == null) 
+                throw new NullReferenceException("Context is null");
+
+            ObjectConstructionTasks = glassContext.DependencyResolver.ResolveAll<IObjectConstructionTask>();
+            TypeResolverTasks = glassContext.DependencyResolver.ResolveAll<ITypeResolverTask>();
+            ConfigurationResolverTasks = glassContext.DependencyResolver.ResolveAll<IConfigurationResolverTask>();
         }
 
-        public static object InstantiateObject(Context context, T dataContext)
+        public object InstantiateObject(AbstractTypeCreationContext abstractTypeCreationContext)
         {
             //Run the get type pipeline to get the type to load
-            var typeRunner = new TypeResolver(context.TypeResolverTasks);
-            var typeArgs = new TypeResolverArgs(context, dataContext);
+            var typeRunner = new TypeResolver(TypeResolverTasks);
+            var typeArgs = new TypeResolverArgs(GlassContext, abstractTypeCreationContext);
             typeRunner.Run(typeArgs);
 
             //TODO: ME - make these exceptions more specific
-            if(typeArgs.Result == null)
+            if (typeArgs.Result == null)
                 throw new NullReferenceException("Type Resolver pipeline did not return type.");
 
             //run the pipeline to get the configuration to load
-            var configurationRunner = new ConfigurationResolver(context.ConfigurationResolverTasks);
-            var configurationArgs = new ConfigurationResolverArgs(context, dataContext, typeArgs.Result);
+            var configurationRunner = new ConfigurationResolver(ConfigurationResolverTasks);
+            var configurationArgs = new ConfigurationResolverArgs(GlassContext, abstractTypeCreationContext, typeArgs.Result);
             configurationRunner.Run(configurationArgs);
 
             if (configurationArgs.Result == null)
                 throw new NullReferenceException("Configuration Resolver pipeline did not return type.");
 
+            var config = configurationArgs.Result;
+
             //Run the object construction
-            var objectRunner = new ObjectConstruction(context.ObjectConstructionTasks);
-            var objectArgs = new ObjectConstructionArgs(context, dataContext, configurationArgs.Result);
+            var objectRunner = new ObjectConstruction(ObjectConstructionTasks);
+            var objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext, config, this);
             objectRunner.Run(objectArgs);
+
+           
 
             return objectArgs.Result;
         }
+
+        public void SaveObject(AbstractTypeSavingContext abstractTypeSavingContext)
+        {
+            //TODO: ME - make this a pipeline
+             //create properties 
+            AbstractDataMappingContext dataMappingContext =  CreateDataMappingContext(abstractTypeSavingContext);
+            abstractTypeSavingContext.Config.Properties.ForEach(x => x.Mapper.MapPropertyToCms(dataMappingContext));
+
+        }
+
+        /// <summary>
+        /// Used to create the context used by DataMappers to map data to a class
+        /// </summary>
+        /// <param name="creationContext"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public abstract AbstractDataMappingContext CreateDataMappingContext(AbstractTypeCreationContext creationContext, object obj);
+
+
+        /// <summary>
+        /// Used to create the context used by DataMappers to map data from a class
+        /// </summary>
+        /// <param name="creationContext"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public abstract AbstractDataMappingContext CreateDataMappingContext(AbstractTypeSavingContext creationContext);
+    }
+
+    public interface IAbstractService
+    {
+        object InstantiateObject(AbstractTypeCreationContext abstractTypeCreationContext);
+        AbstractDataMappingContext CreateDataMappingContext(AbstractTypeCreationContext creationContext, object obj);
     }
 }

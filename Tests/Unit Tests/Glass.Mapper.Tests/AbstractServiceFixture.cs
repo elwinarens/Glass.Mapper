@@ -14,207 +14,99 @@ namespace Glass.Mapper.Tests
     [TestFixture]
     public class AbstractServiceFixture
     {
-        #region Method - InstantiateObject
-
-        [Test]
-        public void InstantiateObject_CallsEachPipelineInTurn_ReturnsConcreteObject()
-        {
-            //Assign
-            Context context = Context.Create();
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            var configuration = Substitute.For<AbstractTypeConfiguration>();
-            var type = typeof (StubClass);
-            var expected = new StubClass();
-
-
-            ITypeResolverTask typeTask = Substitute.For<ITypeResolverTask>();
-            typeTask
-                .When(x=>x.Execute(Arg.Any<TypeResolverArgs>()))
-                .Do(info =>
-                        {
-                            var args = info.Args();
-                            var arg = args[0] as TypeResolverArgs;
-                            arg.Result = type;
-                        });
-
-            context.TypeResolverTasks.Add(typeTask);
-
-            IConfigurationResolverTask configTask = Substitute.For<IConfigurationResolverTask>();
-            configTask
-                .When(x=>x.Execute(Arg.Any<ConfigurationResolverArgs>()))
-                .Do(info =>
-                        {
-                            var args = info.Args();
-                            var arg = args[0] as ConfigurationResolverArgs;
-                            if(arg.Type == type)
-                                arg.Result = configuration;
-                        });
-
-            context.ConfigurationResolverTasks.Add(configTask);
-
-            IObjectConstructionTask objectTask = Substitute.For<IObjectConstructionTask>();
-            objectTask
-                .When(x => x.Execute(Arg.Any<ObjectConstructionArgs>()))
-                .Do(info =>
-                {
-                    var args = info.Args();
-                    var arg = args[0] as ObjectConstructionArgs;
-                    if (arg.Configuration == configuration)
-                        arg.Result = expected;
-                });
-
-            context.ObjectConstructionTasks.Add(objectTask);
-
-
-            //Act
-            var result = AbstractService<IDataContext>.InstantiateObject(context, dataContext);
-
-            //Assert
-            Assert.AreEqual(expected, result);
-
-        }
+        #region Constructors
 
         [Test]
         [ExpectedException(typeof(NullReferenceException))]
-        public void InstantiateObject_TypeResolverDoesntReturnResult_ExceptionThrown()
+        public void Contructor_ContextIsNull_ThrowsException()
         {
             //Assign
-            Context context = Context.Create();
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            var configuration = Substitute.For<AbstractTypeConfiguration>();
-            var type = typeof(StubClass);
-            var expected = new StubClass();
-
-
-            ITypeResolverTask typeTask = Substitute.For<ITypeResolverTask>();
-            typeTask
-                .When(x => x.Execute(Arg.Any<TypeResolverArgs>()))
-                .Do(info =>
-                {
-                    var args = info.Args();
-                    var arg = args[0] as TypeResolverArgs;
-                    arg.Result = null;
-                });
-
-            context.TypeResolverTasks.Add(typeTask);
-            
-            //Act
-            var result = AbstractService<IDataContext>.InstantiateObject(context, dataContext);
-
-            //Assert
-            Assert.AreEqual(expected, result);
-
-        }
-
-        [Test]
-        [ExpectedException(typeof(NullReferenceException))]
-        public void InstantiateObject_ConfigurationResolverDoesntReturnResult_ExceptionThrown()
-        {
-            //Assign
-            Context context = Context.Create();
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            var configuration = Substitute.For<AbstractTypeConfiguration>();
-            var type = typeof(StubClass);
-            var expected = new StubClass();
-
-
-            ITypeResolverTask typeTask = Substitute.For<ITypeResolverTask>();
-            typeTask
-                .When(x => x.Execute(Arg.Any<TypeResolverArgs>()))
-                .Do(info =>
-                {
-                    var args = info.Args();
-                    var arg = args[0] as TypeResolverArgs;
-                    arg.Result = type;
-                });
-
-            context.TypeResolverTasks.Add(typeTask);
-
-            IConfigurationResolverTask configTask = Substitute.For<IConfigurationResolverTask>();
-            configTask
-                .When(x => x.Execute(Arg.Any<ConfigurationResolverArgs>()))
-                .Do(info =>
-                {
-                    var args = info.Args();
-                    var arg = args[0] as ConfigurationResolverArgs;
-                    if (arg.Type == type)
-                        arg.Result = null;
-                });
-
-            context.ConfigurationResolverTasks.Add(configTask);
 
             //Act
-            var result = AbstractService<IDataContext>.InstantiateObject(context, dataContext);
+            var service = new StubAbstractService(null);
 
             //Assert
-            Assert.AreEqual(expected, result);
-
-        }
-
-        [Test]
-        public void InstantiateObject_ObjectCreationReturnsNull_NullReturned()
-        {
-            //Assign
-            Context context = Context.Create();
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            var configuration = Substitute.For<AbstractTypeConfiguration>();
-            var type = typeof(StubClass);
-            var expected = (StubClass) null;
-
-
-            ITypeResolverTask typeTask = Substitute.For<ITypeResolverTask>();
-            typeTask
-                .When(x => x.Execute(Arg.Any<TypeResolverArgs>()))
-                .Do(info =>
-                {
-                    var args = info.Args();
-                    var arg = args[0] as TypeResolverArgs;
-                    arg.Result = type;
-                });
-
-            context.TypeResolverTasks.Add(typeTask);
-
-            IConfigurationResolverTask configTask = Substitute.For<IConfigurationResolverTask>();
-            configTask
-                .When(x => x.Execute(Arg.Any<ConfigurationResolverArgs>()))
-                .Do(info =>
-                {
-                    var args = info.Args();
-                    var arg = args[0] as ConfigurationResolverArgs;
-                    if (arg.Type == type)
-                        arg.Result = configuration;
-                });
-
-            context.ConfigurationResolverTasks.Add(configTask);
-
-            IObjectConstructionTask objectTask = Substitute.For<IObjectConstructionTask>();
-            objectTask
-                .When(x => x.Execute(Arg.Any<ObjectConstructionArgs>()))
-                .Do(info =>
-                {
-                    var args = info.Args();
-                    var arg = args[0] as ObjectConstructionArgs;
-                    if (arg.Configuration == configuration)
-                        arg.Result = expected;
-                });
-
-            context.ObjectConstructionTasks.Add(objectTask);
-
-
-            //Act
-            var result = AbstractService<IDataContext>.InstantiateObject(context, dataContext);
-
-            //Assert
-            Assert.AreEqual(expected, result);
-
         }
 
         #endregion
 
-        #region Stubs
+        #region Method - InstantiateObject
+
+        [Test]
+        public void InstantiageObject_AllRunnersSetup_ObjectReturned()
+        {
+            //Assign
+            Context.ResolverFactory = Substitute.For<IDependencyResolverFactory>();
+            var resolver = Substitute.For<IDependencyResolver>();
+            
+            Context.ResolverFactory.GetResolver().Returns(resolver);
+            var context = Context.Create(Substitute.For<IGlassConfiguration>());
+
+            var typeTask = Substitute.For<ITypeResolverTask>();
+            var configTask = Substitute.For<IConfigurationResolverTask>();
+            var objTask = Substitute.For<IObjectConstructionTask>();
+
+            resolver.ResolveAll<ITypeResolverTask>().Returns(new[] { typeTask });
+            resolver.ResolveAll<IConfigurationResolverTask>().Returns(new[] { configTask });
+            resolver.ResolveAll<IObjectConstructionTask>().Returns(new[] { objTask });
+
+            typeTask.When(x=>x.Execute(Arg.Any<TypeResolverArgs>()))
+                .Do(x=>x.Arg<TypeResolverArgs>().Result = typeof(StubClass));
+
+            configTask.When(x => x.Execute(Arg.Any<ConfigurationResolverArgs>()))
+                .Do(x => x.Arg<ConfigurationResolverArgs>().Result = Substitute.For<AbstractTypeConfiguration>());
+
+            var expected = new object();
+
+            objTask.When(x => x.Execute(Arg.Any<ObjectConstructionArgs>()))
+                .Do(x => x.Arg<ObjectConstructionArgs>().Result = expected);
+
+            var service = new StubAbstractService(context);
+
+            //Act
+            var result = service.InstantiateObject(Substitute.For<AbstractTypeCreationContext>());
+
+            //Assert
+            Assert.AreEqual(expected, result);
+        }
+
+        #endregion
+
+        #region Stub 
 
         public class StubClass
         {
+
+        }
+
+        public class StubAbstractService : AbstractService<StubAbstractDataMappingContext>
+        {
+            public StubAbstractService(Context context) : base(context)
+            {
+            }
+
+            public override AbstractDataMappingContext CreateDataMappingContext(AbstractTypeCreationContext creationContext, object obj)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override AbstractDataMappingContext CreateDataMappingContext(AbstractTypeSavingContext creationContext)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class StubAbstractTypeCreationContext : AbstractTypeCreationContext
+        {
+
+        }
+
+        public class StubAbstractDataMappingContext : AbstractDataMappingContext
+        {
+            public StubAbstractDataMappingContext(object obj) : base(obj)
+            {
+
+            }
         }
 
         #endregion

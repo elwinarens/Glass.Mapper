@@ -19,6 +19,9 @@ namespace Glass.Mapper.Tests.Pipelines.ConfigurationResolver.Tasks.StandardResol
         public void Execute_FindsFirstTypeMatchedInConfigurationsList_ReturnsConfiguration()
         {
             //Assign
+
+            var glassConfig = Substitute.For<IGlassConfiguration>();
+
             var type = typeof (StubClass);
             
             var configuration = Substitute.For<AbstractTypeConfiguration>();
@@ -26,8 +29,11 @@ namespace Glass.Mapper.Tests.Pipelines.ConfigurationResolver.Tasks.StandardResol
             
             var loader = Substitute.For<IConfigurationLoader>();
             loader.Load().Returns(new [] {configuration});
+
+            Context.ResolverFactory = Substitute.For<IDependencyResolverFactory>();
+            Context.ResolverFactory.GetResolver().Returns(Substitute.For<IDependencyResolver>());
+            var context = Context.Create(glassConfig);
             
-            var context = Context.Create();
             context.Load(loader);
 
             var args = new ConfigurationResolverArgs(context, null, type);

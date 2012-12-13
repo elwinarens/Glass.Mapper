@@ -28,16 +28,20 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateInterface
         {
             //Assign
             Type type = typeof(StubClass);
+            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var service = Substitute.For<IAbstractService>();
 
-            Context context = Context.Create();
+            Context.ResolverFactory = Substitute.For<IDependencyResolverFactory>();
+            Context.ResolverFactory.GetResolver().Returns(Substitute.For<IDependencyResolver>());
+            Context context = Context.Create(glassConfig);
 
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            dataContext.RequestedType.Returns(type);
+            AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
+            abstractTypeCreationContext.RequestedType.Returns(type);
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, dataContext, configuration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
             //Act
             _task.Execute(args);
@@ -53,16 +57,20 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateInterface
         {
             //Assign
             Type type = typeof(IStubInterface);
+            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var service = Substitute.For<IAbstractService>();
 
-            Context context = Context.Create();
+            Context.ResolverFactory = Substitute.For<IDependencyResolverFactory>();
+            Context.ResolverFactory.GetResolver().Returns(Substitute.For<IDependencyResolver>());
+            Context context = Context.Create(glassConfig);
 
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            dataContext.RequestedType.Returns(typeof (IStubInterface));
+            AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
+            abstractTypeCreationContext.RequestedType.Returns(typeof (IStubInterface));
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, dataContext, configuration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
             //Act
             _task.Execute(args);
@@ -80,16 +88,18 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateInterface
         {
             //Assign
             Type type = typeof(IStubInterface);
+            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var service = Substitute.For<IAbstractService>();
 
-            Context context = Context.Create();
+            Context context = Context.Create(glassConfig);
 
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            dataContext.RequestedType.Returns(typeof(IStubInterface));
+            AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
+            abstractTypeCreationContext.RequestedType.Returns(typeof(IStubInterface));
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, dataContext, configuration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
             args.Result = string.Empty;
 
             //Act

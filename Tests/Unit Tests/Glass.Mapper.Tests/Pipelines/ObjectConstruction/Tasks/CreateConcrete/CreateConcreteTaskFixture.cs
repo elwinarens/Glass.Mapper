@@ -27,17 +27,20 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         public void Execute_TypeIsInterface_NoObjectCreated()
         {
             //Assign
-            Type type = typeof (IStubInterface);
+            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var service = Substitute.For<IAbstractService>();
 
-            Context context = Context.Create();
+            Type type = typeof(IStubInterface);
 
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            dataContext.RequestedType.Returns(type);
+            Context context = Context.Create(glassConfig);
+
+            AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
+            abstractTypeCreationContext.RequestedType.Returns(type);
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, dataContext, configuration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
             //Act
             _task.Execute(args);
@@ -53,18 +56,20 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         {
             //Assign
             Type type = typeof (StubClass);
+            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var service = Substitute.For<IAbstractService>();
 
-            Context context = Context.Create();
+            Context context = Context.Create(glassConfig);
 
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            dataContext.RequestedType.Returns(typeof (StubClass));
-            dataContext.IsLazy = true;
+            AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
+            abstractTypeCreationContext.RequestedType.Returns(typeof (StubClass));
+            abstractTypeCreationContext.IsLazy = true;
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
             configuration.ConstructorMethods = Utilities.CreateConstructorDelegates(type);
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, dataContext, configuration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
             //Act
             _task.Execute(args);
@@ -82,17 +87,19 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         {
             //Assign
             Type type = typeof (StubClass);
+            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var service = Substitute.For<IAbstractService>();
 
-            Context context = Context.Create();
+            Context context = Context.Create(glassConfig);
 
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            dataContext.RequestedType.Returns(typeof (StubClass));
+            AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
+            abstractTypeCreationContext.RequestedType.Returns(typeof (StubClass));
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.ConstructorMethods = Utilities.CreateConstructorDelegates(type);
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, dataContext, configuration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
             //Act
             _task.Execute(args);
@@ -110,17 +117,19 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         {
             //Assign
             Type type = typeof (StubClass);
+            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var service = Substitute.For<IAbstractService>();
 
-            Context context = Context.Create();
+            Context context = Context.Create(glassConfig);
 
-            IDataContext dataContext = Substitute.For<IDataContext>();
-            dataContext.RequestedType.Returns(typeof (StubClass));
+            AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
+            abstractTypeCreationContext.RequestedType.Returns(typeof (StubClass));
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.ConstructorMethods = Utilities.CreateConstructorDelegates(type);
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, dataContext, configuration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
             args.Result = string.Empty;
 
             //Act
