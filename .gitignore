@@ -9,6 +9,7 @@ Thumbs.db
 *.exe
 *.pdb
 *.user
+*.ncrunchsolution
 *.aps
 *.pch
 *.vspscc
