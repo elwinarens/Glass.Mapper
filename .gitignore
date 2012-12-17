@@ -55,3 +55,4 @@ Tests/Integration Tests/Sitecore/Glass.Mapper.Sc.Integration/Data/license.xml
 *.ncrunchproject
 _Dev
 webedit.css
+IconCache/
