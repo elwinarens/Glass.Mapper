@@ -30,6 +30,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug - Aaron|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug - Aaron\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core">
       <HintPath>..\..\packages\Castle.Core.3.1.0\lib\net40-client\Castle.Core.dll</HintPath>
@@ -50,8 +59,13 @@
     <Compile Include="AbstractDataMappingContext.cs" />
     <Compile Include="AbstractService.cs" />
     <Compile Include="AbstractTypeSavingContext.cs" />
+    <Compile Include="Caching\CacheKeyResolving\CacheKey.cs" />
+    <Compile Include="Caching\CacheKeyResolving\CacheKeyResolver.cs" />
+    <Compile Include="Caching\ObjectCaching\Implementations\CacheTable.cs" />
+    <Compile Include="Caching\ObjectCaching\ObjectCache.cs" />
     <Compile Include="CastleWindsor\CastleDependencyResolver.cs" />
     <Compile Include="CastleWindsor\CastleDependencyResolverFactory.cs" />
+    <Compile Include="Configuration\AbstractObjectCacheConfiguration.cs" />
     <Compile Include="Configuration\AbstractTypeConfiguration.cs" />
     <Compile Include="Configuration\AbstractPropertyConfiguration.cs" />
     <Compile Include="Configuration\Attributes\AttributeConfigurationLoader.cs" />
@@ -98,12 +112,15 @@
     <Compile Include="Pipelines\ObjectConstruction\ObjectConstructionException.cs" />
     <Compile Include="Pipelines\ObjectConstruction\ObjectConstruction.cs" />
     <Compile Include="Pipelines\ObjectConstruction\ObjectConstructionArgs.cs" />
+    <Compile Include="Pipelines\ObjectConstruction\ObjectOrigin.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateConcrete\CreateConcreteTask.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateConcrete\LazyObjectProxyHook.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateConcrete\LazyObjectInterceptor.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateInterface\CreateInterfaceProxyHook.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateInterface\CreateInterfaceTask.cs" />
     <Compile Include="Pipelines\ObjectConstruction\Tasks\CreateInterface\InterfacePropertyInterceptor.cs" />
+    <Compile Include="Pipelines\ObjectConstruction\Tasks\ObjectCachingResolver\ObjectCachingResolverTask.cs" />
+    <Compile Include="Pipelines\ObjectConstruction\Tasks\ObjectCachingSaver\ObjectCachingSaverTask.cs" />
     <Compile Include="Pipelines\TypeResolver\ITypeResolverTask.cs" />
     <Compile Include="Pipelines\TypeResolver\Tasks\StandardResolver\TypeStandardResolverTask.cs" />
     <Compile Include="Pipelines\TypeResolver\TypeResolverArgs.cs" />
