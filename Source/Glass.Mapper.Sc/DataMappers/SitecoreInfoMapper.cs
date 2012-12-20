@@ -14,14 +14,15 @@ namespace Glass.Mapper.Sc.DataMappers
             ReadOnly = true;
         }
 
-        private SitecoreInfoConfiguration _config;
 
         public override void MapToCms(AbstractDataMappingContext mappingContext)
         {
             var context = mappingContext as SitecoreDataMappingContext;
             var item = context.Item;
             var value = context.PropertyValue;
-            switch (_config.Type)
+            var scConfig = Configuration as SitecoreInfoConfiguration;
+
+            switch (scConfig.Type)
             {
                 case SitecoreInfoType.DisplayName:
                     if (value is string || value == null)
@@ -46,7 +47,7 @@ namespace Glass.Mapper.Sc.DataMappers
                         throw new NotSupportedException("Can't set Name. Value is not of type System.String");
                     break;
                 default:
-                    throw new NotSupportedException("You can not save SitecoreInfo {0}".Formatted(_config.Type));
+                    throw new NotSupportedException("You can not save SitecoreInfo {0}".Formatted(scConfig.Type));
             }
         }
 
@@ -54,11 +55,12 @@ namespace Glass.Mapper.Sc.DataMappers
         {
             var context = mappingContext as SitecoreDataMappingContext;
             var item = context.Item;
+            var scConfig = Configuration as SitecoreInfoConfiguration;
 
             //TODO: move this to the config?
-            var urlOptions = Utilities.CreateUrlOptions(_config.UrlOptions);
+            var urlOptions = Utilities.CreateUrlOptions(scConfig.UrlOptions);
 
-            switch (_config.Type)
+            switch (scConfig.Type)
             {
                
                   case SitecoreInfoType.ContentPath:
@@ -78,7 +80,7 @@ namespace Glass.Mapper.Sc.DataMappers
                 case SitecoreInfoType.Path:
                     return item.Paths.Path;
                 case SitecoreInfoType.TemplateId:
-                    if (_config.PropertyInfo != null && _config.PropertyInfo.PropertyType == typeof (Sitecore.Data.ID))
+                    if (scConfig.PropertyInfo != null && scConfig.PropertyInfo.PropertyType == typeof(Sitecore.Data.ID))
                         return item.TemplateID;
                     else
                         return item.TemplateID.Guid;
@@ -91,14 +93,14 @@ namespace Glass.Mapper.Sc.DataMappers
                 case SitecoreInfoType.Language:
                     return item.Language;  
                 default:
-                    throw new MapperException("SitecoreInfoType {0} not supported".Formatted(_config.Type));
+                    throw new MapperException("SitecoreInfoType {0} not supported".Formatted(scConfig.Type));
             }
         }
 
         public override void Setup(Mapper.Configuration.AbstractPropertyConfiguration configuration)
         {
-            _config = configuration as SitecoreInfoConfiguration;
-            this.ReadOnly = _config.Type != SitecoreInfoType.DisplayName && _config.Type != SitecoreInfoType.Name;
+            var scConfig = configuration as SitecoreInfoConfiguration;
+            this.ReadOnly = scConfig.Type != SitecoreInfoType.DisplayName && scConfig.Type != SitecoreInfoType.Name;
             base.Setup(configuration);
         }
 

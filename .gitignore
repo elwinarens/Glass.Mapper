@@ -9,7 +9,6 @@ Thumbs.db
 *.exe
 *.pdb
 *.user
-*.ncrunchsolution
 *.aps
 *.pch
 *.vspscc
@@ -25,7 +24,6 @@ Thumbs.db
 *.log
 [Bb]in
 [Dd]ebug*/
-[Bb]in_Net4
 *.lib
 *.sbr
 obj/
@@ -51,8 +49,5 @@ Source/Glass.Sitecore.Mapper.Demo/data/
 *.suo
 packages/Sitecore/*
 Tests/Integration Tests/Sitecore/Glass.Mapper.Sc.Integration/Data/license.xml
-*.ncrunchsolution.user
-*.ncrunchproject
-_Dev
-webedit.css
-IconCache/
+Glass.Mapper.ncrunchsolution.user
+*ncrunch*

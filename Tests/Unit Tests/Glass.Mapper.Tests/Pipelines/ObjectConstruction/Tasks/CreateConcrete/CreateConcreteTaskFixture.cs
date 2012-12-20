@@ -27,7 +27,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         public void Execute_TypeIsInterface_NoObjectCreated()
         {
             //Assign
-            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var glassConfig = Substitute.For<GlassCastleConfigBase>();
             var service = Substitute.For<IAbstractService>();
 
             Type type = typeof(IStubInterface);
@@ -56,7 +56,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         {
             //Assign
             Type type = typeof (StubClass);
-            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var glassConfig = Substitute.For<GlassCastleConfigBase>();
             var service = Substitute.For<IAbstractService>();
 
             Context context = Context.Create(glassConfig);
@@ -87,7 +87,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         {
             //Assign
             Type type = typeof (StubClass);
-            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var glassConfig = Substitute.For<GlassCastleConfigBase>();
             var service = Substitute.For<IAbstractService>();
 
             Context context = Context.Create(glassConfig);
@@ -117,7 +117,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
         {
             //Assign
             Type type = typeof (StubClass);
-            var glassConfig = Substitute.For<IGlassConfiguration>();
+            var glassConfig = Substitute.For<GlassCastleConfigBase>();
             var service = Substitute.For<IAbstractService>();
 
             Context context = Context.Create(glassConfig);
