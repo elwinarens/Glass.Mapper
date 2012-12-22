@@ -6,8 +6,8 @@ using Glass.Mapper.Pipelines.ObjectConstruction;
 
 namespace Glass.Mapper.Caching.CacheKeyResolving
 {
-    public interface ICacheKeyResolver<T>
+    public abstract class CacheKeyResolver
     {
-        CacheKey<Guid> GetKey(ObjectConstructionArgs args);
+        public abstract CacheKey GetKey(ObjectConstructionArgs args);
     }
 }

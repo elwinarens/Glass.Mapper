@@ -79,6 +79,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
             Assert.IsNotNull(args.Result);
             Assert.IsTrue(args.Result is StubClass);
             Assert.IsFalse(args.Result.GetType() == typeof(StubClass));
+            Assert.IsTrue(ObjectOrigin.CreateConcreteLazy == args.ObjectOrigin);
         }
 
         [Test]
@@ -108,6 +109,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateConcrete
             Assert.IsNotNull(args.Result);
             Assert.IsTrue(args.Result is StubClass);
             Assert.IsTrue(args.Result.GetType() == typeof(StubClass));
+            Assert.IsTrue(ObjectOrigin.CreateConcrete == args.ObjectOrigin);
         }
 
         [Test]
