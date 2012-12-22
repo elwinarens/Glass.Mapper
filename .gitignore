@@ -23,6 +23,7 @@ Thumbs.db
 *.ilk
 *.log
 [Bb]in
+[Bb]in_Net4
 [Dd]ebug*/
 *.lib
 *.sbr
