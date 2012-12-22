@@ -37,15 +37,6 @@
     <OutputPath>.\Release\</OutputPath>
     <RecursiveDeployAction>Ignore</RecursiveDeployAction>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug - Aaron' ">
-    <DebugSymbols>true</DebugSymbols>
-    <RecursiveDeployAction>Ignore</RecursiveDeployAction>
-    <SitecoreDeployFolder>C:\Git\Glass.Mapper\Tests\Integration Tests\Sitecore\Glass.Mapper.Sc.Integration</SitecoreDeployFolder>
-    <SitecoreWebUrl>http://sitecore.glass.com</SitecoreWebUrl>
-    <SitecoreAccessGuid>fd21ce01-25b5-4388-a335-6211a7a211b9</SitecoreAccessGuid>
-    <InstallSitecoreConnector>True</InstallSitecoreConnector>
-    <OutputPath>.\Debug - Aaron\</OutputPath>
-  </PropertyGroup>
   <ItemGroup>
     <AssemblyAttributes Include="AssemblyFileVersion">
       <Value>$(AssemblyFileVersion)</Value>
@@ -163,7 +154,6 @@
     <SitecoreItem Include="sitecore\content\Tests\SitecoreService\GetItem\EmptyItem.item">
       <Icon>/temp/IconCache/Applications/32x32/Document.png</Icon>
       <ItemDeployment>AlwaysUpdate</ItemDeployment>
-      <ChildItemSynchronization>NoChildSynchronization</ChildItemSynchronization>
     </SitecoreItem>
     <SitecoreItem Include="sitecore\templates.item">
       <Icon>/temp/IconCache/Applications/16x16/form_blue.png</Icon>

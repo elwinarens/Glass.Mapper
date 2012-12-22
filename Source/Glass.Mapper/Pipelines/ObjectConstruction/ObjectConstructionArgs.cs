@@ -15,13 +15,9 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction
         /// </summary>
         public AbstractTypeConfiguration Configuration { get; private set; }
 
-        public AbstractObjectCacheConfiguration ObjectCacheConfiguration { get; private set; }
-
         public IAbstractService Service { get; private set; }
 
         public object Result { get; set; }
-
-        public ObjectOrigin ObjectOrigin { get; set; }
 
         public ObjectConstructionArgs(
             Context context, 
@@ -33,17 +29,6 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction
             AbstractTypeCreationContext = abstractTypeCreationContext;
             Configuration = configuration;
             Service = service;
-        }
-
-        public ObjectConstructionArgs(
-            Context context,
-            AbstractTypeCreationContext abstractTypeCreationContext,
-            AbstractTypeConfiguration configuration,
-            IAbstractService service,
-            AbstractObjectCacheConfiguration objectCacheConfiguration)
-            : this(context, abstractTypeCreationContext, configuration, service)
-        {
-            ObjectCacheConfiguration = objectCacheConfiguration;
         }
 
        
