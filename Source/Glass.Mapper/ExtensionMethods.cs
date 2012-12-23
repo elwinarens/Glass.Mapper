@@ -69,6 +69,11 @@ namespace Glass.Mapper
             return new T[] {obj};
         }
 
+        public static T CastTo<T>(this object target)
+        {
+            return (T)target;
+        }
+
         #endregion
     }
 }

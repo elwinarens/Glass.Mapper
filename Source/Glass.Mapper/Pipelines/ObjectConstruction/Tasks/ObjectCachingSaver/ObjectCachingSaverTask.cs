@@ -9,11 +9,10 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingSaver
     {
         public void Execute(ObjectConstructionArgs args)
         {
-            //check the cache
-            //continue if its in there now
-
             //Save item to the cache
-            //continue
+            args.ObjectCacheConfiguration.ObjectCache.AddObject(args);
+
+            args.Result = Glass.Mapper.ObjectCaching.Proxy.CacheProxyGenerator.CreateProxy(args.Result);
         }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Glass.Mapper.Caching.ObjectCaching;
 using Glass.Mapper.Configuration;
 using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingResolver;
@@ -45,7 +42,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingRes
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service, cacheConfiguration);
 
 
             cacheConfiguration.ObjectCache.GetObject(args).ReturnsForAnyArgs(new StubClass());

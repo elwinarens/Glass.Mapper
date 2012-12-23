@@ -64,6 +64,10 @@
     <Compile Include="Caching\CacheKeyResolving\CannotGenerateKeyException.cs" />
     <Compile Include="Caching\ObjectCaching\Implementations\CacheTable.cs" />
     <Compile Include="Caching\ObjectCaching\ObjectCache.cs" />
+    <Compile Include="Caching\Proxy\CacheInterfaceMethodInterceptor.cs" />
+    <Compile Include="Caching\Proxy\CacheMethodInterceptor.cs" />
+    <Compile Include="Caching\Proxy\CacheProxyGenerator.cs" />
+    <Compile Include="Caching\Proxy\CacheProxyGeneratorHook.cs" />
     <Compile Include="CastleWindsor\CastleDependencyResolver.cs" />
     <Compile Include="CastleWindsor\CastleDependencyResolverFactory.cs" />
     <Compile Include="Configuration\AbstractObjectCacheConfiguration.cs" />
@@ -133,6 +137,8 @@
     <Compile Include="Pipelines\TypeResolver\TypeResolverArgs.cs" />
     <Compile Include="Pipelines\TypeResolver\TypeResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Proxies\InterfaceMethodInterceptor.cs" />
+    <Compile Include="Proxies\ProxyClassInterceptor.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup />
