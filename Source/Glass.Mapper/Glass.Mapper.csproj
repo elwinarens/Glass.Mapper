@@ -61,6 +61,7 @@
     <Compile Include="AbstractTypeSavingContext.cs" />
     <Compile Include="Caching\CacheKeyResolving\CacheKey.cs" />
     <Compile Include="Caching\CacheKeyResolving\CacheKeyResolver.cs" />
+    <Compile Include="Caching\CacheKeyResolving\CannotGenerateKeyException.cs" />
     <Compile Include="Caching\ObjectCaching\Implementations\CacheTable.cs" />
     <Compile Include="Caching\ObjectCaching\ObjectCache.cs" />
     <Compile Include="CastleWindsor\CastleDependencyResolver.cs" />

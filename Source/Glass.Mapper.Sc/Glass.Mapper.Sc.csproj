@@ -94,6 +94,7 @@
     <Compile Include="ISitecoreService.cs" />
     <Compile Include="ItemEditing.cs" />
     <Compile Include="LazyItemEnumerable.cs" />
+    <Compile Include="Pipelines\SitecorePipelineArg.cs" />
     <Compile Include="SitecoreDataMappingContext.cs" />
     <Compile Include="SitecoreTypeCreationContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

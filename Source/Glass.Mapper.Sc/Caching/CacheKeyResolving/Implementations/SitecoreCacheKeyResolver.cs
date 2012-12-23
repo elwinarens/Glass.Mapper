@@ -8,9 +8,18 @@ namespace Glass.Mapper.Sc.Caching.CacheKeyResolving.Implementations
 {
     public class SitecoreCacheKeyResolver : CacheKeyResolver
     {
-        public override CacheKey GetKey(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
+        public override CacheKey GetKey(Mapper.Pipelines.ObjectConstruction.ObjectConstructionArgs args)
         {
-            throw new NotImplementedException();
+            var scTypeContext = args.AbstractTypeCreationContext as SitecoreTypeCreationContext;
+            if (scTypeContext != null)
+            {
+                return new CacheKey(
+                    new Guid(scTypeContext.Item.Fields[Sitecore.FieldIDs.Revision].Value),
+                    scTypeContext.Item.Database.Name,
+                    args.AbstractTypeCreationContext.RequestedType
+                    );
+            }
+            throw  new CannotGenerateKeyException("Can not resolve revision ID");
         }
     }
 }

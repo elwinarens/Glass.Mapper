@@ -17,8 +17,6 @@ namespace Glass.Mapper.Tests.Caching
             //Assign
             var cacheKeyResolver = Substitute.For<CacheKeyResolver>();
 
-
-
             //Assign
             Type type = typeof(StubClass);
             var glassConfig = Substitute.For<IGlassConfiguration>();

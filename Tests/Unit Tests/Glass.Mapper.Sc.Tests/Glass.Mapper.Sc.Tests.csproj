@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\SitecoreCacheKeyResolverFixture.cs" />
     <Compile Include="Configuration\Attributes\SitecoreAttributeConfigurationLoaderFixture.cs" />
     <Compile Include="Configuration\Attributes\SitecoreChildrenAttributeFixture.cs" />
     <Compile Include="Configuration\Attributes\SitecoreQueryAttributeFixture.cs" />
@@ -61,6 +62,8 @@
     <Compile Include="Configuration\Attributes\SitecoreLinkedAttributeFixture.cs" />
     <Compile Include="Configuration\Attributes\SitecoreNodeAttributeFixture.cs" />
     <Compile Include="Configuration\Attributes\SitecoreParentAttributeFixture.cs" />
+    <Compile Include="IMockItem.cs" />
+    <Compile Include="MockItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
