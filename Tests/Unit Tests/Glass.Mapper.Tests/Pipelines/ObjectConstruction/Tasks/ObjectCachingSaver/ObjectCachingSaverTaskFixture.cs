@@ -38,9 +38,9 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingSav
 
             AbstractObjectCacheConfiguration cacheConfiguration = Substitute.For<AbstractObjectCacheConfiguration>();
 
-            var cacheKeyResolver = Substitute.For<CacheKeyResolver>();
+            var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver>();
 
-            cacheConfiguration.ObjectCache = Substitute.For<ObjectCache>(cacheKeyResolver);
+            cacheConfiguration.ObjectCache = Substitute.For<AbstractObjectCache>(cacheKeyResolver);
 
             AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
             abstractTypeCreationContext.RequestedType.Returns(type);
@@ -50,7 +50,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingSav
 
             ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service, cacheConfiguration);
 
-
+            args.Result = new StubClass();
             cacheKeyResolver.GetKey(args).ReturnsForAnyArgs(new CacheKey(new Guid(), "master", typeof(StubClass)));
 
             cacheConfiguration.ObjectCache.GetObject(args).ReturnsForAnyArgs(new StubClass());
@@ -62,7 +62,8 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingSav
             //Assert
             Assert.IsFalse(args.IsAborted);
             Assert.IsTrue(cacheConfiguration.ObjectCache.ContansObject(args));
-            //Assert
+            Assert.IsAssignableFrom(typeof(StubClass), cacheConfiguration.ObjectCache.GetObject(args));
+            
         }
 
         #region Stubs

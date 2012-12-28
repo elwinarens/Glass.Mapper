@@ -34,7 +34,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingRes
             Context context = Context.Create(glassConfig);
 
             AbstractObjectCacheConfiguration cacheConfiguration = Substitute.For<AbstractObjectCacheConfiguration>();
-            cacheConfiguration.ObjectCache = Substitute.For<ObjectCache>();
+            cacheConfiguration.ObjectCache = Substitute.For<AbstractObjectCache>();
 
             AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
             abstractTypeCreationContext.RequestedType.Returns(type);
@@ -73,7 +73,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingRes
             abstractTypeCreationContext.RequestedType.Returns(type);
 
             AbstractObjectCacheConfiguration cacheConfiguration = Substitute.For<AbstractObjectCacheConfiguration>();
-            cacheConfiguration.ObjectCache = Substitute.For<ObjectCache>();
+            cacheConfiguration.ObjectCache = Substitute.For<AbstractObjectCache>();
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
@@ -88,8 +88,6 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingRes
             //Assert
             Assert.IsNull(args.Result);
             Assert.IsFalse(args.IsAborted);
-
-
         }
 
         #endregion

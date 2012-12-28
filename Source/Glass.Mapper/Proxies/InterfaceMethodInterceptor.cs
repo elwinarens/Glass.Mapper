@@ -12,9 +12,16 @@ namespace Glass.Mapper.Proxies
     {
         private readonly ObjectConstructionArgs _args;
         private readonly AbstractPipelineRunner<AbstractPipelineArgs, IPipelineTask<AbstractPipelineArgs>> _runner;
+        private bool _isLoaded;
+
         public Dictionary<string, object> Values { get; private set; }
 
-        bool _isLoaded = false;
+        private IInvocation _invocation;
+
+        public IInvocation Invocation
+        {
+            get { return _invocation; }
+        }
 
         public InterfaceMethodInterceptor(ObjectConstructionArgs args,
                                      AbstractPipelineRunner<AbstractPipelineArgs, IPipelineTask<AbstractPipelineArgs>>
@@ -29,13 +36,13 @@ namespace Glass.Mapper.Proxies
 
         public virtual void Intercept(IInvocation invocation)
         {
-
+            _invocation = invocation;
             //do initial gets
             if (!_isLoaded)
             {
                 _runner.Run(_args);
 
-                foreach (var property in _args.AbstractTypeCreationContext.RequestedType.GetProperties())
+                foreach (var property in _args.Configuration.Type.GetProperties())
                 {
                     Values[property.Name] = property.GetValue(_args.Result, null);
                 }

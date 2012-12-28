@@ -15,7 +15,7 @@ namespace Glass.Mapper.Tests.Caching
         public void ResolveKey_GetKey()
         {
             //Assign
-            var cacheKeyResolver = Substitute.For<CacheKeyResolver>();
+            var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver>();
 
             //Assign
             Type type = typeof(StubClass);
@@ -30,7 +30,7 @@ namespace Glass.Mapper.Tests.Caching
             abstractTypeCreationContext.RequestedType.Returns(type);
 
             AbstractObjectCacheConfiguration cacheConfiguration = Substitute.For<AbstractObjectCacheConfiguration>();
-            cacheConfiguration.ObjectCache = Substitute.For<ObjectCache>();
+            cacheConfiguration.ObjectCache = Substitute.For<AbstractObjectCache>();
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;

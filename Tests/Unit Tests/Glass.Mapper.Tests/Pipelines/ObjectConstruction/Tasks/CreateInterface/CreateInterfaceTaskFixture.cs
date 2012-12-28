@@ -110,9 +110,6 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.CreateInterface
             Assert.IsFalse(args.IsAborted);
             Assert.IsTrue(args.Result is string);
         }
-
-
-
         #endregion
 
         #region Stubs

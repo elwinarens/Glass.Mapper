@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Glass.Mapper.Sc.Caching.CacheKeyResolving.Implementations
 {
-    public class SitecoreCacheKeyResolver : CacheKeyResolver
+    public class SitecoreCacheKeyResolver : AbstractCacheKeyResolver
     {
         public override CacheKey GetKey(Mapper.Pipelines.ObjectConstruction.ObjectConstructionArgs args)
         {
@@ -19,7 +19,8 @@ namespace Glass.Mapper.Sc.Caching.CacheKeyResolving.Implementations
                     args.AbstractTypeCreationContext.RequestedType
                     );
             }
-            throw  new CannotGenerateKeyException("Can not resolve revision ID");
+
+            throw  new CannotGenerateKeyException("Can not resolve Key");
         }
     }
 }

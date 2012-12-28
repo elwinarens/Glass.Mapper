@@ -3,17 +3,29 @@ using Glass.Mapper.Pipelines.ObjectConstruction;
 
 namespace Glass.Mapper.Caching.ObjectCaching
 {
-    public abstract class ObjectCache
+    public abstract class AbstractObjectCache
     {
-        protected CacheKeyResolver _cacheKeyResolver;
+        protected AbstractCacheKeyResolver CacheKeyResolver;
 
         public abstract object GetObject(ObjectConstructionArgs args);
         public abstract bool ContansObject(ObjectConstructionArgs args);
         public abstract bool AddObject(ObjectConstructionArgs args);
+        public abstract bool ClearCache();
 
-        protected ObjectCache(CacheKeyResolver cacheKeyResolver)
+        protected AbstractObjectCache()
         {
-            _cacheKeyResolver = cacheKeyResolver;
+        }
+
+        protected AbstractObjectCache(Context glassContext)
+        {
+            CacheKeyResolver = glassContext.DependencyResolver.Resolve<AbstractCacheKeyResolver>();
+        }
+
+       
+
+        protected AbstractObjectCache(AbstractCacheKeyResolver cacheKeyResolver)
+        {
+            CacheKeyResolver = cacheKeyResolver;
         }
     }
 }

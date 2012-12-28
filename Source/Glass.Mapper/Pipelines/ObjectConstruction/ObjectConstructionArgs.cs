@@ -17,11 +17,16 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction
 
         public AbstractObjectCacheConfiguration ObjectCacheConfiguration { get; private set; }
 
+        public bool DisableCache { get; internal set; }
+
         public IAbstractService Service { get; private set; }
 
-        public object Result { get; set; }
+        public virtual object Result { get; set; }
 
         public ObjectOrigin ObjectOrigin { get; set; }
+
+        public ObjectConstructionArgs() : base()
+        { }
 
         public ObjectConstructionArgs(
             Context context, 

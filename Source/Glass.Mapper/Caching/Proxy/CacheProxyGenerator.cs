@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Castle.DynamicProxy;
+using Glass.Mapper.ObjectCaching.Proxy;
 using Glass.Mapper.Proxies;
 
-namespace Glass.Mapper.ObjectCaching.Proxy
+namespace Glass.Mapper.Caching.Proxy
 {
 
     public class CacheProxyGenerator
     {
-        private static readonly Castle.DynamicProxy.ProxyGenerator _generator = new Castle.DynamicProxy.ProxyGenerator();
-        private static readonly Castle.DynamicProxy.ProxyGenerationOptions _options = new Castle.DynamicProxy.ProxyGenerationOptions(new CacheProxyGeneratorHook());
+        private static readonly ProxyGenerator _generator = new ProxyGenerator();
+        private static readonly ProxyGenerationOptions _options = new ProxyGenerationOptions(new CacheProxyGeneratorHook());
 
 
         public static object CreateProxy(object originalTarget)

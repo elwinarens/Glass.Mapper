@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Glass.Mapper.Caching.ObjectCaching;
+using Glass.Mapper.Configuration;
 using Glass.Mapper.Pipelines.ObjectConstruction;
 using Glass.Mapper.Pipelines.ObjectSaving;
 using Glass.Mapper.Pipelines.TypeResolver;
@@ -35,6 +37,8 @@ namespace Glass.Mapper
         /// </summary>
         private IEnumerable<IObjectSavingTask> ObjectSavingTasks { get; set; }
 
+        private AbstractObjectCacheConfiguration ObjectCacheConfiguration { get; set; }
+
 
 
         public AbstractService()
@@ -58,6 +62,7 @@ namespace Glass.Mapper
             TypeResolverTasks = glassContext.DependencyResolver.ResolveAll<ITypeResolverTask>();
             ConfigurationResolverTasks = glassContext.DependencyResolver.ResolveAll<IConfigurationResolverTask>();
             ObjectSavingTasks = glassContext.DependencyResolver.ResolveAll<IObjectSavingTask>();
+            ObjectCacheConfiguration = glassContext.DependencyResolver.Resolve<AbstractObjectCacheConfiguration>(new Dictionary<string, object> {{"glassContext", glassContext}});
         }
 
         public object InstantiateObject(AbstractTypeCreationContext abstractTypeCreationContext)
@@ -83,7 +88,17 @@ namespace Glass.Mapper
 
             //Run the object construction
             var objectRunner = new ObjectConstruction(ObjectConstructionTasks);
-            var objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext, config, this);
+
+            ObjectConstructionArgs objectArgs;
+            if (ObjectCacheConfiguration == null)
+            {
+                objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext, config, this);
+            }
+            else
+            {
+                objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext, config, this, ObjectCacheConfiguration);
+            }
+            
             objectRunner.Run(objectArgs);
 
            

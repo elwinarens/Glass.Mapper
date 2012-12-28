@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using Glass.Mapper.CastleWindsor;
 using Glass.Mapper.Pipelines.ConfigurationResolver;
 using Glass.Mapper.Pipelines.ConfigurationResolver.Tasks.StandardResolver;
 using Glass.Mapper.Pipelines.DataMapperResolver;

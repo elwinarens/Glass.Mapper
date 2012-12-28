@@ -59,6 +59,7 @@
     <Compile Include="AbstractDataMappingContext.cs" />
     <Compile Include="AbstractService.cs" />
     <Compile Include="AbstractTypeSavingContext.cs" />
+    <Compile Include="Caching\CacheDisabler.cs" />
     <Compile Include="Caching\CacheKeyResolving\CacheKey.cs" />
     <Compile Include="Caching\CacheKeyResolving\CacheKeyResolver.cs" />
     <Compile Include="Caching\CacheKeyResolving\CannotGenerateKeyException.cs" />

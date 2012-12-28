@@ -56,21 +56,24 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Analytics">
-      <HintPath>..\..\..\..\packages\Sitecore\Sitecore.Analytics.dll</HintPath>
+    <Reference Include="Sitecore.Analytics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Depends\Sitecore.Analytics.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Kernel">
-      <HintPath>..\..\..\..\packages\Sitecore\Sitecore.Kernel.dll</HintPath>
+    <Reference Include="Sitecore.Client">
+      <HintPath>..\..\..\..\Depends\Sitecore.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Kernel, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Depends\Sitecore.Kernel.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Logging, Version=1.2.0.30715, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\Sitecore\Sitecore.Logging.dll</HintPath>
+      <HintPath>..\..\..\..\Depends\Sitecore.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="sitecore.nexus">
-      <HintPath>..\..\..\..\packages\Sitecore\sitecore.nexus.dll</HintPath>
-    </Reference>
-    <Reference Include="SitecoreClient">
-      <HintPath>..\..\..\..\packages\Sitecore\SitecoreClient.dll</HintPath>
+    <Reference Include="sitecore.nexus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Depends\sitecore.nexus.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -96,6 +99,7 @@
     <Compile Include="DataMappers\SitecoreInfoMapperFixture.cs" />
     <Compile Include="DataMappers\SitecoreParentMapperFixture.cs" />
     <Compile Include="GlassConfig.cs" />
+    <Compile Include="Pipelines\ObjectConstruction\ObjectCachingFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\SitecoreTypeFieldHandler.cs" />
     <Compile Include="SitecoreServiceFixture.cs" />
@@ -224,6 +228,7 @@
       <Name>Glass.Mapper</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

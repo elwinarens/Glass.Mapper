@@ -18,7 +18,7 @@ namespace Glass.Mapper.ObjectCaching.Proxy
             _subInterceptor = subInterceptor;
         }
 
-        public  void Intercept(Castle.DynamicProxy.IInvocation invocation)
+        public void Intercept(Castle.DynamicProxy.IInvocation invocation)
         {
 
             if (invocation.Method.IsSpecialName)

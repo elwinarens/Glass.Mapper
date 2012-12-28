@@ -19,6 +19,10 @@ namespace Glass.Mapper.Pipelines
         public IEnumerable<K> Tasks { get { return _tasks; } }
 
 
+        public AbstractPipelineRunner()
+        {
+        }
+
         public AbstractPipelineRunner(IEnumerable<K> tasks)
         {
             _tasks = tasks;

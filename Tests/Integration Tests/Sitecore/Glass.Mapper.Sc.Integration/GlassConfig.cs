@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using Glass.Mapper.Caching.CacheKeyResolving;
+using Glass.Mapper.Caching.ObjectCaching;
+using Glass.Mapper.CastleWindsor;
+using Glass.Mapper.Configuration;
 using Glass.Mapper.Pipelines.ConfigurationResolver;
 using Glass.Mapper.Pipelines.ConfigurationResolver.Tasks.StandardResolver;
 using Glass.Mapper.Pipelines.DataMapperResolver;
@@ -11,11 +15,16 @@ using Glass.Mapper.Pipelines.DataMapperResolver.Tasks;
 using Glass.Mapper.Pipelines.ObjectConstruction;
 using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete;
 using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateInterface;
+using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingResolver;
+using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingSaver;
 using Glass.Mapper.Pipelines.ObjectSaving;
 using Glass.Mapper.Pipelines.ObjectSaving.Tasks;
 using Glass.Mapper.Pipelines.TypeResolver;
 using Glass.Mapper.Pipelines.TypeResolver.Tasks.StandardResolver;
+using Glass.Mapper.Sc.Caching;
+using Glass.Mapper.Sc.Caching.CacheKeyResolving.Implementations;
 using Glass.Mapper.Sc.DataMappers;
+using Glass.Mapper.Caching.ObjectCaching.Implementations;
 
 namespace Glass.Mapper.Sc.Integration
 {
@@ -63,15 +72,26 @@ namespace Glass.Mapper.Sc.Integration
             // Tasks are called in the order they are specified below.
             // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
 
+                Component.For<IObjectConstructionTask>().ImplementedBy<ObjectCachingResolverTask>().LifestyleTransient(),
                 Component.For<IObjectConstructionTask>().ImplementedBy<CreateConcreteTask>().LifestyleTransient(),
                 Component.For<IObjectConstructionTask>().ImplementedBy<CreateInterfaceTask>().LifestyleTransient(),
+                Component.For<IObjectConstructionTask>().ImplementedBy<ObjectCachingSaverTask>().LifestyleTransient(),
 
                         //****** Object Saving Tasks ******//
             // These tasks are run when an a class needs to be saved by Glass.Mapper.
             // Tasks are called in the order they are specified below.
             // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
 
-                Component.For<IObjectSavingTask>().ImplementedBy<StandardSavingTask>().LifestyleTransient()
+                Component.For<IObjectSavingTask>().ImplementedBy<StandardSavingTask>().LifestyleTransient(),
+
+                
+
+                Component.For<AbstractObjectCacheConfiguration>().ImplementedBy<ObjectCacheConfiguration>().LifestyleTransient(),
+                Component.For<AbstractObjectCache>().ImplementedBy<CacheTable>().LifestyleTransient(),
+                Component.For<AbstractCacheKeyResolver>().ImplementedBy<SitecoreCacheKeyResolver>().LifestyleTransient()
+
+                
+
             );
         }
     }

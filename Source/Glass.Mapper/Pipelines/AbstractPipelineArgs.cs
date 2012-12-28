@@ -19,7 +19,11 @@ namespace Glass.Mapper.Pipelines
             Context = context;
         }
 
-        public bool AbortPipeline ()
+        public AbstractPipelineArgs()
+        {
+        }
+
+        public bool AbortPipeline()
         {
             IsAborted = true;
             return IsAborted;

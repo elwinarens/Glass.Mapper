@@ -9,9 +9,8 @@ namespace Glass.Mapper.ObjectCaching.Proxy
 {
     public class CacheMethodInterceptor : IInterceptor
     {
-
-        Dictionary<string, object> _values;
-        object _originalTarget;
+        private readonly Dictionary<string, object> _values;
+        private readonly object _originalTarget;
 
         public CacheMethodInterceptor(object originalTarget)
         {
@@ -23,14 +22,13 @@ namespace Glass.Mapper.ObjectCaching.Proxy
 
         public void Intercept(IInvocation invocation)
         {
-
             if (invocation.Method.IsSpecialName)
             {
                 if (invocation.Method.Name.StartsWith("get_") || invocation.Method.Name.StartsWith("set_"))
                 {
                     //Must be a property
 
-                     string method = invocation.Method.Name.Substring(0, 4);
+                    string method = invocation.Method.Name.Substring(0, 4);
                     string name = invocation.Method.Name.Substring(4);
 
                     //if the dictionary contains the name then a value must have been set
@@ -39,12 +37,12 @@ namespace Glass.Mapper.ObjectCaching.Proxy
                         invocation.ReturnValue = _values[name];
                         return;
                     }
-                    else if (method == "set_")
+                    
+                    if (method == "set_")
                     {
                         _values[name] = invocation.Arguments[0];
                         return;
                     }
-                    
                 }
             }
                 
