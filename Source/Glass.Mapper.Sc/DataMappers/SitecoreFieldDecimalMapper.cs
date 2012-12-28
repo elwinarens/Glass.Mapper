@@ -15,22 +15,22 @@ namespace Glass.Mapper.Sc.DataMappers
 
         }
 
-        public override object GetFieldValue(Field field, SitecoreFieldConfiguration config,
+        public override object GetFieldValue(string fieldValue, SitecoreFieldConfiguration config,
                                              SitecoreDataMappingContext context)
         {
-            if (field.Value.IsNullOrEmpty()) return 0M;
+            if (fieldValue.IsNullOrEmpty()) return 0M;
 
             decimal dValue = 0;
-            if (decimal.TryParse(field.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out dValue))
+            if (decimal.TryParse(fieldValue, NumberStyles.Any, CultureInfo.InvariantCulture, out dValue))
                 return dValue;
             else throw new MapperException("Could not convert value to decimal");
         }
 
-        public override void SetFieldValue(Field field, object value, SitecoreFieldConfiguration config, SitecoreDataMappingContext context)
+        public override string SetFieldValue(object value, SitecoreFieldConfiguration config, SitecoreDataMappingContext context)
         {
             if (value is decimal)
             {
-                field.Value = value.ToString();
+                return value.ToString();
             }
             else
                 throw new NotSupportedException("The value is not of type System.Decimal");

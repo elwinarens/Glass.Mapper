@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glass.Mapper.Pipelines.DataMapperResolver;
 using Glass.Mapper.Sc.Configuration.Attributes;
 using NSubstitute;
 using NSubstitute.Core;
@@ -43,7 +44,7 @@ namespace Glass.Mapper.Sc.Integration.DataMappers
 
             var context = new SitecoreDataMappingContext(null, item, service);
 
-            mapper.Setup(config);
+            mapper.Setup(new DataMapperResolverArgs(null,config));
             
             //Act
             var result = mapper.MapToProperty(context) as IEnumerable<StubChild>;
@@ -84,7 +85,7 @@ namespace Glass.Mapper.Sc.Integration.DataMappers
 
             var context = new SitecoreDataMappingContext(null, item, service);
 
-            mapper.Setup(config);
+            mapper.Setup(new DataMapperResolverArgs(null,config));
 
             //Act
             var result = mapper.MapToProperty(context) as IEnumerable<StubChild>;
@@ -128,6 +129,25 @@ namespace Glass.Mapper.Sc.Integration.DataMappers
         public class Stub
         {
             public IEnumerable<StubChild> Children { get; set; } 
+        }
+
+
+        #endregion
+
+        #region CanHandle
+
+        [Test]
+        public void CanHandle_ConfigIsChildren_ReturnsTrue()
+        {
+            //Assign
+            var mapper = new SitecoreChildrenMapper();
+            var config = new SitecoreChildrenConfiguration();
+
+            //Act
+            var result = mapper.CanHandle(config, null);
+
+            //Assert
+            Assert.IsTrue(result);
         }
 
 

@@ -15,20 +15,20 @@ namespace Glass.Mapper.Sc.DataMappers
 
         }
 
-        public override object GetFieldValue(Field field, SitecoreFieldConfiguration config,
+        public override object GetFieldValue(string fieldValue, SitecoreFieldConfiguration config,
                                              SitecoreDataMappingContext context)
         {
-            if (field.Value.IsNullOrEmpty()) return 0d;
+            if (fieldValue.IsNullOrEmpty()) return 0d;
             double dValue = 0;
-            if (double.TryParse(field.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out dValue)) return dValue;
+            if (double.TryParse(fieldValue, NumberStyles.Any, CultureInfo.InvariantCulture, out dValue)) return dValue;
             else throw new MapperException("Could not convert value to double");
         }
 
-        public override void SetFieldValue(Field field, object value, SitecoreFieldConfiguration config, SitecoreDataMappingContext context)
+        public override string SetFieldValue(object value, SitecoreFieldConfiguration config, SitecoreDataMappingContext context)
         {
             if (value is double)
             {
-                field.Value = value.ToString();
+                return value.ToString();
             }
             else
                 throw new NotSupportedException("The value is not of type System.Double");
