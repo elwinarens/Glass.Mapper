@@ -64,8 +64,8 @@ namespace Glass.Mapper.Sc.Website
                 // Tasks are called in the order they are specified below.
                 // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
 
-                Component.For<IObjectConstructionTask>().ImplementedBy<CreateConcreteTask>().LifestyleTransient(),
-                Component.For<IObjectConstructionTask>().ImplementedBy<CreateInterfaceTask>().LifestyleTransient(),
+                Component.For<ObjectConstructionTask>().ImplementedBy<CreateConcreteTask>().LifestyleTransient(),
+                Component.For<ObjectConstructionTask>().ImplementedBy<CreateInterfaceTask>().LifestyleTransient(),
 
                         //****** Object Saving Tasks ******//
                 // These tasks are run when an a class needs to be saved by Glass.Mapper.

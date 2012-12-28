@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glass.Mapper.Pipelines.ObjectConstruction;
+using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete;
+using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateInterface;
+using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingResolver;
+using Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingSaver;
 using Glass.Mapper.Sc.Configuration;
 using Glass.Mapper.Sc.Configuration.Attributes;
 using NUnit.Framework;
@@ -12,6 +17,23 @@ namespace Glass.Mapper.Sc.Integration
     [TestFixture]
     public class SitecoreServiceFixture
     {
+        #region GlassConfig
+
+        [Test]
+        public void ObjectConstructionTask_Has_Correct_Order()
+        {
+            var db = Sitecore.Configuration.Factory.GetDatabase("master");
+            var service = new SitecoreService(db);
+            var objectConstructionTasks = service.GlassContext.DependencyResolver.ResolveAllInOrder<ObjectConstructionTask>("Order").ToList();
+
+            Assert.IsAssignableFrom<ObjectCachingResolverTask>(objectConstructionTasks[0]);
+            Assert.IsAssignableFrom<CreateConcreteTask>(objectConstructionTasks[1]);
+            Assert.IsAssignableFrom<CreateInterfaceTask>(objectConstructionTasks[2]);
+            Assert.IsAssignableFrom<ObjectCachingSaverTask>(objectConstructionTasks[3]);
+        }
+
+        #endregion
+
         #region Method - GetItem
 
         [Test]

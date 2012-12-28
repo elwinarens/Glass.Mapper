@@ -44,11 +44,11 @@ namespace Glass.Mapper.Tests
 
             var typeTask = Substitute.For<ITypeResolverTask>();
             var configTask = Substitute.For<IConfigurationResolverTask>();
-            var objTask = Substitute.For<IObjectConstructionTask>();
+            var objTask = Substitute.For<ObjectConstructionTask>();
 
             resolver.ResolveAll<ITypeResolverTask>().Returns(new[] { typeTask });
             resolver.ResolveAll<IConfigurationResolverTask>().Returns(new[] { configTask });
-            resolver.ResolveAll<IObjectConstructionTask>().Returns(new[] { objTask });
+            resolver.ResolveAll<ObjectConstructionTask>().Returns(new[] { objTask });
 
             typeTask.When(x=>x.Execute(Arg.Any<TypeResolverArgs>()))
                 .Do(x=>x.Arg<TypeResolverArgs>().Result = typeof(StubClass));

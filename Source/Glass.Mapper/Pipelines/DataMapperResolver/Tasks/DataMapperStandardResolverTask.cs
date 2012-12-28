@@ -20,5 +20,7 @@ namespace Glass.Mapper.Pipelines.DataMapperResolver.Tasks
                 args.Result = mapper;
             }
         }
+
+        public int Order { get; set; }
     }
 }

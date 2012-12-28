@@ -7,7 +7,7 @@ using Castle.DynamicProxy;
 
 namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
 {
-    public class CreateConcreteTask : IObjectConstructionTask
+    public class CreateConcreteTask : ObjectConstructionTask
     {
         private const string ConstructorErrorMessage = "No constructor for class {0} with parameters {1}";
 
@@ -21,7 +21,7 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
             _options = new ProxyGenerationOptions(hook);
         }
 
-        public void Execute(ObjectConstructionArgs args)
+        public override void Execute(ObjectConstructionArgs args)
         {
             if (args.Result != null)
                 return;

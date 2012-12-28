@@ -40,63 +40,79 @@ namespace Glass.Mapper.Sc.Integration
                 Component.For<AbstractDataMapper>().ImplementedBy<SitecoreParentMapper>().LifestyleTransient(),
                 Component.For<AbstractDataMapper>().ImplementedBy<SitecoreFieldStringMapper>().LifestyleTransient(),
 
-        
-            //****** Data Mapper Resolver Tasks ******//
-            // These tasks are run when Glass.Mapper tries to resolve which DataMapper should handle a given property, e.g. 
-            // Tasks are called in the order they are specified below.
-            // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
-                Component.For<IDataMapperResolverTask>().ImplementedBy<DataMapperStandardResolverTask>().LifestyleTransient(),
-        
-            //****** Type Resolver Tasks ******//
-            // These tasks are run when Glass.Mapper tries to resolve the type a user has requested, e.g. 
-            // if your code contained
-            //       service.GetItem<MyClass>(id) 
-            // the standard resolver will return MyClass as the type. You may want to specify your own tasks to custom type
-            // inferring.
-            // Tasks are called in the order they are specified below.
-            // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
+
+                //****** Data Mapper Resolver Tasks ******//
+                // These tasks are run when Glass.Mapper tries to resolve which DataMapper should handle a given property, e.g. 
+                // Tasks are called in the order they are specified below.
+                // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
+                Component.For<IDataMapperResolverTask>()
+                         .ImplementedBy<DataMapperStandardResolverTask>()
+                         .LifestyleTransient(),
+
+                //****** Type Resolver Tasks ******//
+                // These tasks are run when Glass.Mapper tries to resolve the type a user has requested, e.g. 
+                // if your code contained
+                //       service.GetItem<MyClass>(id) 
+                // the standard resolver will return MyClass as the type. You may want to specify your own tasks to custom type
+                // inferring.
+                // Tasks are called in the order they are specified below.
+                // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
 
                 Component.For<ITypeResolverTask>().ImplementedBy<TypeStandardResolverTask>().LifestyleTransient(),
-         
-            //****** Configuration Resolver Tasks ******//
-            // These tasks are run when Glass.Mapper tries to find the configration the user has requested based on the type passsed, e.g. 
-            // if your code contained
-            //       service.GetItem<MyClass>(id) 
-            // the standard resolver will return the MyClass configuration. 
-            // Tasks are called in the order they are specified below.
-            // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
-            
-                Component.For<IConfigurationResolverTask>().ImplementedBy<ConfigurationStandardResolverTask>().LifestyleTransient(),
-         
-            //****** Object Construction Tasks ******//
-            // These tasks are run when an a class needs to be instantiated by Glass.Mapper.
-            // Tasks are called in the order they are specified below.
-            // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
 
-                Component.For<IObjectConstructionTask>().ImplementedBy<ObjectCachingResolverTask>().LifestyleTransient(),
-                Component.For<IObjectConstructionTask>().ImplementedBy<CreateConcreteTask>().LifestyleTransient(),
-                Component.For<IObjectConstructionTask>().ImplementedBy<CreateInterfaceTask>().LifestyleTransient(),
-                Component.For<IObjectConstructionTask>().ImplementedBy<ObjectCachingSaverTask>().LifestyleTransient(),
+                //****** Configuration Resolver Tasks ******//
+                // These tasks are run when Glass.Mapper tries to find the configration the user has requested based on the type passsed, e.g. 
+                // if your code contained
+                //       service.GetItem<MyClass>(id) 
+                // the standard resolver will return the MyClass configuration. 
+                // Tasks are called in the order they are specified below.
+                // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
 
-                        //****** Object Saving Tasks ******//
-            // These tasks are run when an a class needs to be saved by Glass.Mapper.
-            // Tasks are called in the order they are specified below.
-            // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
+                Component.For<IConfigurationResolverTask>()
+                         .ImplementedBy<ConfigurationStandardResolverTask>()
+                         .LifestyleTransient(),
 
-                Component.For<IObjectSavingTask>().ImplementedBy<StandardSavingTask>().LifestyleTransient()
-                
-                
-                //,
+                //****** Object Construction Tasks ******//
+                // These tasks are run when an a class needs to be instantiated by Glass.Mapper.
+                // Tasks are called in the order they are specified below.
+                // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
 
-                
+                Component.For<ObjectConstructionTask>()
+                         .ImplementedBy<ObjectCachingResolverTask>()
+                         .LifestyleTransient()
+                         .OnCreate(task => task.Order = 0),
 
-                //Component.For<AbstractObjectCacheConfiguration>().ImplementedBy<ObjectCacheConfiguration>().LifestyleTransient(),
-                //Component.For<AbstractObjectCache>().ImplementedBy<CacheTable>().LifestyleTransient(),
-                //Component.For<AbstractCacheKeyResolver>().ImplementedBy<SitecoreCacheKeyResolver>().LifestyleTransient()
+                Component.For<ObjectConstructionTask>()
+                         .ImplementedBy<CreateConcreteTask>()
+                         .LifestyleTransient()
+                         .OnCreate(task => task.Order = 1),
 
-                
+                Component.For<ObjectConstructionTask>()
+                         .ImplementedBy<CreateInterfaceTask>()
+                         .LifestyleTransient()
+                         .OnCreate(task => task.Order = 2),
 
-            );
+                Component.For<ObjectConstructionTask>()
+                         .ImplementedBy<ObjectCachingSaverTask>()
+                         .LifestyleTransient()
+                         .OnCreate(task => task.Order = 3),
+
+                //****** Object Saving Tasks ******//
+                // These tasks are run when an a class needs to be saved by Glass.Mapper.
+                // Tasks are called in the order they are specified below.
+                // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
+
+                Component.For<IObjectSavingTask>().ImplementedBy<StandardSavingTask>().LifestyleTransient(),
+
+
+
+                Component.For<AbstractObjectCacheConfiguration>().ImplementedBy<ObjectCacheConfiguration>().LifestyleTransient(),
+                Component.For<AbstractObjectCache>().ImplementedBy<CacheTable>().LifestyleTransient(),
+                Component.For<AbstractCacheKeyResolver>().ImplementedBy<SitecoreCacheKeyResolver>().LifestyleTransient()
+
+
+
+                );
         }
     }
 }

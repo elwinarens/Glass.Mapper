@@ -129,6 +129,9 @@ namespace Glass.Mapper.Tests.Pipelines
             }
 
             public bool HasExecuted { get; set; }
+
+
+            public int Order { get; set; }
         }
 
         #endregion

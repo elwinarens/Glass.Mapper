@@ -21,7 +21,7 @@ namespace Glass.Mapper
         /// <summary>
         /// The list of tasks to be performed by the Object Construction Pipeline. Called in the order specified.
         /// </summary>
-        private IEnumerable<IObjectConstructionTask> ObjectConstructionTasks { get; set; }
+        private IEnumerable<ObjectConstructionTask> ObjectConstructionTasks { get; set; }
 
         /// <summary>
         /// The list of tasks to be performed by the Type Resolver Pipeline. Called in the order specified.
@@ -59,7 +59,7 @@ namespace Glass.Mapper
             if (GlassContext == null) 
                 throw new NullReferenceException("Context is null");
 
-            ObjectConstructionTasks = glassContext.DependencyResolver.ResolveAll<IObjectConstructionTask>();
+            ObjectConstructionTasks = glassContext.DependencyResolver.ResolveAllInOrder<ObjectConstructionTask>("Order");
             TypeResolverTasks = glassContext.DependencyResolver.ResolveAll<ITypeResolverTask>();
             ConfigurationResolverTasks = glassContext.DependencyResolver.ResolveAll<IConfigurationResolverTask>();
             ObjectSavingTasks = glassContext.DependencyResolver.ResolveAll<IObjectSavingTask>();

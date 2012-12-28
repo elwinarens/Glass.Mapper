@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Glass.Mapper.Pipelines.ObjectConstruction
 {
-    public class ObjectConstruction : AbstractPipelineRunner<ObjectConstructionArgs, IObjectConstructionTask>
+    public class ObjectConstruction : AbstractPipelineRunner<ObjectConstructionArgs, ObjectConstructionTask>
     {
-        public ObjectConstruction(IEnumerable<IObjectConstructionTask> tasks ):base(tasks)
+        public ObjectConstruction(IEnumerable<ObjectConstructionTask> tasks ):base(tasks)
         {
         }
 

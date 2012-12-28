@@ -3,6 +3,7 @@ using Castle.MicroKernel;
 using Castle.Windsor;
 using System.Collections.Generic;
 using Glass.Mapper.Configuration;
+using System.Linq;
 
 namespace Glass.Mapper.CastleWindsor
 {
@@ -45,6 +46,13 @@ namespace Glass.Mapper.CastleWindsor
         public IEnumerable<T> ResolveAll<T>()
         {
             return _container.ResolveAll<T>();
+        }
+
+        public IEnumerable<T> ResolveAllInOrder<T>(string field)
+        {
+            return from t in _container.ResolveAll<T>()
+                       orderby field + ", DEC"
+                       select t;
         }
     }
 }

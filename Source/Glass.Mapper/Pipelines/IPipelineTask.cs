@@ -8,5 +8,6 @@ namespace Glass.Mapper.Pipelines
     public interface IPipelineTask<T>  where T: AbstractPipelineArgs
     {
         void Execute(T args);
+        int Order { get; set; }
     }
 }

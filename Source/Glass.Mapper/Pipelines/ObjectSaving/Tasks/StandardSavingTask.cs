@@ -17,5 +17,7 @@ namespace Glass.Mapper.Pipelines.ObjectSaving.Tasks
 
             savingContext.Config.Properties.ForEach(x => x.Mapper.MapPropertyToCms(dataMappingContext));
         }
+
+        public int Order { get; set; }
     }
 }

@@ -6,9 +6,9 @@ using Glass.Mapper.Caching.Proxy;
 
 namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingSaver
 {
-    public class ObjectCachingSaverTask : IObjectConstructionTask
+    public class ObjectCachingSaverTask : ObjectConstructionTask
     {
-        public void Execute(ObjectConstructionArgs args)
+        public override void Execute(ObjectConstructionArgs args)
         {
             if (args.DisableCache) return;
 

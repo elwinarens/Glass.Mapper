@@ -12,5 +12,7 @@ namespace Glass.Mapper.Pipelines.ConfigurationResolver.Tasks.StandardResolver
             //TODO: ME - this needs to be made more efficent, maybe with a dictionary
             args.Result = args.Context[args.Type];
         }
+
+        public int Order { get; set; }
     }
 }

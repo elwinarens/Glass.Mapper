@@ -16,5 +16,8 @@ namespace Glass.Mapper.Pipelines.TypeResolver.Tasks.StandardResolver
             }
 
         }
+
+
+        public int Order { get; set; }
     }
 }
