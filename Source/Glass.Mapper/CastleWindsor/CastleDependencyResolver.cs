@@ -1,9 +1,8 @@
 ﻿using System.Collections;
+using Castle.MicroKernel;
 using Castle.Windsor;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Glass.Mapper.Configuration;
 
 namespace Glass.Mapper.CastleWindsor
 {
@@ -13,10 +12,21 @@ namespace Glass.Mapper.CastleWindsor
 
         public T Resolve<T>(IDictionary<string, object> args = null)
         {
-            if (args == null)
-                return _container. Resolve<T>();
-            else
+            //TODO: Aaron This is bad need to look into a different way of doing this
+            try
+            {
+                if (args == null)
+                    return _container.Resolve<T>();
+
                 return _container.Resolve<T>((IDictionary)args);
+            }
+            catch (ComponentNotFoundException ex)
+            {
+                if (typeof (T) != typeof (AbstractObjectCacheConfiguration))
+                    throw;
+            }
+
+            return default(T);
         }
 
         public void Load(string contextName, IGlassConfiguration config)

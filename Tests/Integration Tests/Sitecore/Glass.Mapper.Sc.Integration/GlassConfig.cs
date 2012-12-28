@@ -82,13 +82,16 @@ namespace Glass.Mapper.Sc.Integration
             // Tasks are called in the order they are specified below.
             // For more on component registration read: http://docs.castleproject.org/Windsor.Registering-components-one-by-one.ashx
 
-                Component.For<IObjectSavingTask>().ImplementedBy<StandardSavingTask>().LifestyleTransient(),
+                Component.For<IObjectSavingTask>().ImplementedBy<StandardSavingTask>().LifestyleTransient()
+                
+                
+                //,
 
                 
 
-                Component.For<AbstractObjectCacheConfiguration>().ImplementedBy<ObjectCacheConfiguration>().LifestyleTransient(),
-                Component.For<AbstractObjectCache>().ImplementedBy<CacheTable>().LifestyleTransient(),
-                Component.For<AbstractCacheKeyResolver>().ImplementedBy<SitecoreCacheKeyResolver>().LifestyleTransient()
+                //Component.For<AbstractObjectCacheConfiguration>().ImplementedBy<ObjectCacheConfiguration>().LifestyleTransient(),
+                //Component.For<AbstractObjectCache>().ImplementedBy<CacheTable>().LifestyleTransient(),
+                //Component.For<AbstractCacheKeyResolver>().ImplementedBy<SitecoreCacheKeyResolver>().LifestyleTransient()
 
                 
 

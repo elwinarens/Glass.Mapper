@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Glass.Mapper.Caching;
 using Glass.Mapper.Caching.ObjectCaching;
 using Glass.Mapper.Configuration;
 using Glass.Mapper.Pipelines.ObjectConstruction;
@@ -92,16 +93,27 @@ namespace Glass.Mapper
             ObjectConstructionArgs objectArgs;
             if (ObjectCacheConfiguration == null)
             {
-                objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext, config, this);
+                objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext,
+                                                       config, this);
             }
             else
             {
-                objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext, config, this, ObjectCacheConfiguration);
+                objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext,
+                                                        config, this, ObjectCacheConfiguration);
             }
-            
-            objectRunner.Run(objectArgs);
 
-           
+            if (DisableCache)
+            {
+                using (new CacheDisabler(objectArgs))
+                {
+                    objectRunner.Run(objectArgs);
+                }
+            }
+            else
+            {
+                objectRunner.Run(objectArgs);
+            }
+
 
             return objectArgs.Result;
         }
@@ -130,6 +142,9 @@ namespace Glass.Mapper
         /// <param name="obj"></param>
         /// <returns></returns>
         public abstract AbstractDataMappingContext CreateDataMappingContext(AbstractTypeSavingContext creationContext);
+
+
+        public bool DisableCache { get; set; }
     }
 
     public interface IAbstractService
@@ -137,7 +152,8 @@ namespace Glass.Mapper
         Context GlassContext { get;  }
 
         object InstantiateObject(AbstractTypeCreationContext abstractTypeCreationContext);
-          /// <summary>
+        
+        /// <summary>
         /// Used to create the context used by DataMappers to map data to a class
         /// </summary>
         /// <param name="creationContext">The Type Creation Context used to create the instance</param>
@@ -152,5 +168,7 @@ namespace Glass.Mapper
         /// <param name="creationContext">The Saving Context</param>
         /// <returns></returns>
         AbstractDataMappingContext CreateDataMappingContext(AbstractTypeSavingContext creationContext);
+
+        bool DisableCache { get; set; }
     }
 }
