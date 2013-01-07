@@ -48,9 +48,7 @@
 .\Debug - Aaron\bin\Sitecore.Apps.Loader.dll
 .\Debug - Aaron\bin\Sitecore.Automation.MarketingAutomation.dll
 .\Debug - Aaron\bin\Sitecore.Client.dll
-.\Debug - Aaron\bin\Sitecore.Client.XML
 .\Debug - Aaron\bin\Sitecore.Kernel.dll
-.\Debug - Aaron\bin\Sitecore.Kernel.xml
 .\Debug - Aaron\bin\Sitecore.Logging.dll
 .\Debug - Aaron\bin\sitecore.nexus.dll
 .\Debug - Aaron\bin\Sitecore.NVelocity.dll
@@ -67,4 +65,3 @@
 .\Debug - Aaron\bin\Stimulsoft.Report.WebDesign.dll
 .\Debug - Aaron\bin\Telerik.Web.UI.dll
 .\Debug - Aaron\bin\Telerik.Web.UI.Skins.dll
-.\Debug - Aaron\bin\Telerik.Web.UI.xml

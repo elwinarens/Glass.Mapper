@@ -12,7 +12,7 @@ namespace Glass.Mapper.Sc.Integration
     [SetUpFixture]
     public class SetupSitecoreForTesting
     {
-        [SetUp]
+        //[SetUp]
         public void DeployTestItems()
         {
             //We need to locate the TDS project that contains our test configuration. We are assuming its folder is a sibling of the project folder and we are in the /bin/[config] folder

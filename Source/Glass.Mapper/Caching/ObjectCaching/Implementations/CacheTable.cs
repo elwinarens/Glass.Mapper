@@ -4,11 +4,11 @@ using Glass.Mapper.Caching.CacheKeyResolving;
 
 namespace Glass.Mapper.Caching.ObjectCaching.Implementations
 {
-    public class CacheTable : AbstractObjectCache
+    public class CacheTable<TIdType> : AbstractObjectCache<TIdType>
     {
         private static volatile Hashtable _table = new Hashtable();
 
-        public CacheTable(AbstractCacheKeyResolver cacheKeyResolver)
+        public CacheTable(AbstractCacheKeyResolver<TIdType> cacheKeyResolver)
             : base(cacheKeyResolver)
         {
         }

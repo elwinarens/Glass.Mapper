@@ -13,17 +13,17 @@ namespace Glass.Mapper.Tests.Caching
     [TestFixture]
     public class CacheTableFixture
     {
-        private CacheTable _cacheTable;
-        private CacheKey _cacheKey;
+        private CacheTable<int> _cacheTable;
+        private CacheKey<int> _cacheKey;
 
         [SetUp]
         public void SetUp()
         {
             var args = Substitute.For<ObjectConstructionArgs>();
-            var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver>();
-            _cacheKey = new CacheKey();
+            var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver<int>>();
+            _cacheKey = Substitute.For<CacheKey<int>>();
             cacheKeyResolver.GetKey(args).Returns(_cacheKey);
-            _cacheTable = new CacheTable(cacheKeyResolver);
+            _cacheTable = new CacheTable<int>(cacheKeyResolver);
             _cacheTable.ClearCache();
         }
 

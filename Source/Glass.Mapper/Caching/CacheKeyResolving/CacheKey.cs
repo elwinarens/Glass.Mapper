@@ -5,16 +5,23 @@ using System.Text;
 
 namespace Glass.Mapper.Caching.CacheKeyResolving
 {
-    public struct CacheKey : IEquatable<CacheKey>
+    public abstract class CacheKey<TIdType> : IEquatable<CacheKey<TIdType>>, ICacheKey
     {
-        public CacheKey(Guid revisionId, string database, Type type): this()
+        protected CacheKey(TIdType id, TIdType revisionId, string database, Type type)
+            : this()
         {
+            Id = id;
             RevisionId = revisionId;
             Database = database;
             Type = type;
         }
 
-        public Guid RevisionId { get; private set; }
+        protected CacheKey()
+        {
+        }
+
+        public TIdType Id { get; private set; }
+        public TIdType RevisionId { get; private set; }
         public string Database { get; private set; }
         public Type Type { get; private set; }
 
@@ -23,9 +30,6 @@ namespace Glass.Mapper.Caching.CacheKeyResolving
             return "{0},{1},{2}".Formatted(RevisionId, Database, Type);
         }
 
-        public bool Equals(CacheKey other)
-        {
-            return other.RevisionId == this.RevisionId && other.Database == this.Database && other.Type == this.Type;
-        }
+        public abstract bool Equals(CacheKey<TIdType> other);
     }
 }

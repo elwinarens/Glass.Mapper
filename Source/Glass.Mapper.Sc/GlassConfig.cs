@@ -148,8 +148,8 @@ namespace Glass.Mapper.Sc.Integration
 
 
                 Component.For<AbstractObjectCacheConfiguration>().ImplementedBy<ObjectCacheConfiguration>().LifestyleTransient(),
-                Component.For<AbstractObjectCache>().ImplementedBy<CacheTable>().LifestyleTransient(),
-                Component.For<AbstractCacheKeyResolver>().ImplementedBy<SitecoreCacheKeyResolver>().LifestyleTransient()
+                Component.For<IAbstractObjectCache>().ImplementedBy<CacheTable<Guid>>().LifestyleTransient(),
+                Component.For<AbstractCacheKeyResolver<Guid>>().ImplementedBy<SitecoreCacheKeyResolver>().LifestyleTransient()
 
 
 

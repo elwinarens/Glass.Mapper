@@ -8,22 +8,22 @@ namespace Glass.Mapper.Configuration
 {
     public abstract class AbstractObjectCacheConfiguration
     {
-        public AbstractObjectCache ObjectCache { get; set; }
+        public IAbstractObjectCache ObjectCache { get; set; }
 
-        public AbstractObjectCacheConfiguration()
+        protected AbstractObjectCacheConfiguration()
             : this(Context.Default)
         {
 
         }
 
-        public AbstractObjectCacheConfiguration(string contextName)
+        protected AbstractObjectCacheConfiguration(string contextName)
             : this(Context.Contexts[contextName])
         {
         }
 
-        public AbstractObjectCacheConfiguration(Context glassContext)
+        protected AbstractObjectCacheConfiguration(Context glassContext)
         {
-            ObjectCache = glassContext.DependencyResolver.Resolve<AbstractObjectCache>(new Dictionary<string, object> { { "glassContext", glassContext } });
+            ObjectCache = glassContext.DependencyResolver.Resolve<IAbstractObjectCache>(new Dictionary<string, object> { { "glassContext", glassContext } });
         }
     }
 }

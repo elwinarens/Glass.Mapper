@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\CacheKeyResolving\Implementations\SitecoreCacheKey.cs" />
     <Compile Include="Caching\CacheKeyResolving\Implementations\SitecoreCacheKeyResolver.cs" />
     <Compile Include="Caching\ObjectCacheConfiguration.cs" />
     <Compile Include="Configuration\Attributes\SitecoreAttributeConfigurationLoader.cs" />
