@@ -58,7 +58,7 @@
     <SitecoreItem Include="sitecore\content.item">
       <Icon>/temp/IconCache/People/16x16/cubes_blue.png</Icon>
       <ChildItemSynchronization>NoChildSynchronization</ChildItemSynchronization>
-      <ItemDeployment>AlwaysUpdate</ItemDeployment>
+      <ItemDeployment>DeployOnce</ItemDeployment>
     </SitecoreItem>
     <SitecoreItem Include="sitecore\content\Tests.item">
       <Icon>/temp/IconCache/Applications/16x16/folder.png</Icon>
@@ -618,7 +618,7 @@
     <SitecoreItem Include="sitecore\templates.item">
       <Icon>/temp/IconCache/Applications/16x16/form_blue.png</Icon>
       <ChildItemSynchronization>NoChildSynchronization</ChildItemSynchronization>
-      <ItemDeployment>AlwaysUpdate</ItemDeployment>
+      <ItemDeployment>DeployOnce</ItemDeployment>
     </SitecoreItem>
     <SitecoreItem Include="sitecore\templates\Tests.item">
       <Icon>/temp/IconCache/Applications/16x16/folder.png</Icon>
