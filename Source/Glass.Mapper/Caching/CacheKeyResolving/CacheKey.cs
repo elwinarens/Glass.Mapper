@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Glass.Mapper.Caching.CacheKeyResolving
 {
@@ -27,7 +24,7 @@ namespace Glass.Mapper.Caching.CacheKeyResolving
 
         public override string ToString()
         {
-            return "{0},{1},{2}".Formatted(RevisionId, Database, Type);
+            return "{0},{1},{2},{3}".Formatted(Id, RevisionId, Database, Type);
         }
 
         public abstract bool Equals(CacheKey<TIdType> other);

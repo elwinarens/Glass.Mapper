@@ -24,8 +24,6 @@ namespace Glass.Mapper
 
         public static IDependencyResolverFactory ResolverFactory { get; set; }
 
-       
-
         static Context()
         {
             ResolverFactory = new CastleDependencyResolverFactory();
@@ -67,7 +65,9 @@ namespace Glass.Mapper
             var context = new Context();
             context.DependencyResolver = ResolverFactory.GetResolver();
             context.DependencyResolver.Load(contextName, glassConfig);
-            
+
+            context.ObjectCacheConfiguration = context.DependencyResolver.TryResolve<AbstractObjectCacheConfiguration>();
+
             Contexts[contextName] = context;
 
             if (isDefault)
@@ -87,6 +87,8 @@ namespace Glass.Mapper
         }
 
         #endregion
+
+        public AbstractObjectCacheConfiguration ObjectCacheConfiguration { get; private set; }
 
         /// <summary>
         /// List of the type configurations loaded by this context
@@ -142,7 +144,6 @@ namespace Glass.Mapper
 
             foreach(var property in properties)
             {
-
                 DataMapperResolverArgs args = new DataMapperResolverArgs(this, property);
                 args.PropertyConfiguration = property;
                 args.DataMappers = DependencyResolver.ResolveAll<AbstractDataMapper>();

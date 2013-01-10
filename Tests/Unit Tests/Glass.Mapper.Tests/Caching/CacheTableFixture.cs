@@ -22,7 +22,7 @@ namespace Glass.Mapper.Tests.Caching
             var args = Substitute.For<ObjectConstructionArgs>();
             var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver<int>>();
             _cacheKey = Substitute.For<CacheKey<int>>();
-            cacheKeyResolver.GetKey(args).Returns(_cacheKey);
+            cacheKeyResolver.GetKey(args).ReturnsForAnyArgs(_cacheKey);
             _cacheTable = new CacheTable<int>(cacheKeyResolver);
             _cacheTable.ClearCache();
         }
@@ -56,7 +56,6 @@ namespace Glass.Mapper.Tests.Caching
             var args = Substitute.For<ObjectConstructionArgs>();
             args.Result.Returns(stubClass);
 
-
             //Act
             _cacheTable.AddObject(args);
 
@@ -78,15 +77,13 @@ namespace Glass.Mapper.Tests.Caching
 
 
             //Act
-            Assert.IsFalse(_cacheTable.AddObject(args));
+            _cacheTable.AddObject(args);
 
             //Assert 
 
             Assert.AreEqual(args.Result, null);
             Assert.IsFalse(_cacheTable.ContansObject(args));
-
         }
-
        
 
         #region Stubs

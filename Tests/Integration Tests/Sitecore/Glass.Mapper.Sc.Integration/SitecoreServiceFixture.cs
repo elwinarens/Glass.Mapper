@@ -527,10 +527,10 @@ namespace Glass.Mapper.Sc.Integration
 
         [SitecoreType]
         public class StubClass{
-            public DateTime Param3 { get; set; }
-            public bool Param4 { get; set; }
-            public string Param2 { get; set; }
-            public int Param1 { get; set; }
+            public virtual DateTime Param3 { get; set; }
+            public virtual bool Param4 { get; set; }
+            public virtual string Param2 { get; set; }
+            public virtual int Param1 { get; set; }
 
             public StubClass()
             {

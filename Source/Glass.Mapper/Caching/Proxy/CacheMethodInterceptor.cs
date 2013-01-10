@@ -32,8 +32,14 @@ namespace Glass.Mapper.ObjectCaching.Proxy
                     string name = invocation.Method.Name.Substring(4);
 
                     //if the dictionary contains the name then a value must have been set
-                    if (_values.ContainsKey(name) && method == "get_")
+                    if (method == "get_")
                     {
+                        if (_values.ContainsKey(name))
+                        {
+                            invocation.ReturnValue = _values[name];
+                            return;
+                        }
+                        _values[name] = invocation.Method.Invoke(_originalTarget, invocation.Arguments);
                         invocation.ReturnValue = _values[name];
                         return;
                     }
@@ -46,6 +52,7 @@ namespace Glass.Mapper.ObjectCaching.Proxy
                 }
             }
                 
+
             invocation.ReturnValue = invocation.Method.Invoke(_originalTarget, invocation.Arguments);
 
         }

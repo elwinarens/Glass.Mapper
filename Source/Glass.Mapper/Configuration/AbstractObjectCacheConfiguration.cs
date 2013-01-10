@@ -23,7 +23,7 @@ namespace Glass.Mapper.Configuration
 
         protected AbstractObjectCacheConfiguration(Context glassContext)
         {
-            ObjectCache = glassContext.DependencyResolver.Resolve<IAbstractObjectCache>(new Dictionary<string, object> { { "glassContext", glassContext } });
+            ObjectCache = glassContext.DependencyResolver.TryResolve<IAbstractObjectCache>();
         }
     }
 }

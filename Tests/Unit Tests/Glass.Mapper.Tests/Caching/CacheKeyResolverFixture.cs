@@ -25,17 +25,19 @@ namespace Glass.Mapper.Tests.Caching
             Context.ResolverFactory = Substitute.For<IDependencyResolverFactory>();
             Context.ResolverFactory.GetResolver().Returns(Substitute.For<IDependencyResolver>());
             Context context = Context.Create(glassConfig);
-
+            
             AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
             abstractTypeCreationContext.RequestedType.Returns(type);
 
             var cacheConfiguration = Substitute.For<AbstractObjectCacheConfiguration>();
             cacheConfiguration.ObjectCache = Substitute.For<AbstractObjectCache<int>>();
 
+            context.ObjectCacheConfiguration.Returns(cacheConfiguration);
+
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            var args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service, cacheConfiguration);
+            var args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
 
             var key = Substitute.For<CacheKey<int>>();

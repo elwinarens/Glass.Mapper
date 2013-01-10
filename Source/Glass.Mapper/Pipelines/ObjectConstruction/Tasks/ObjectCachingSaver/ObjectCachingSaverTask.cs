@@ -13,7 +13,7 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingSaver
             if (args.DisableCache) return;
 
             //Save item to the cache
-            args.ObjectCacheConfiguration.ObjectCache.AddObject(args);
+            args.Context.ObjectCacheConfiguration.ObjectCache.AddObject(args);
 
             args.Result = CacheProxyGenerator.CreateProxy(args.Result);
         }

@@ -36,13 +36,15 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingRes
             AbstractObjectCacheConfiguration cacheConfiguration = Substitute.For<AbstractObjectCacheConfiguration>();
             cacheConfiguration.ObjectCache = Substitute.For<AbstractObjectCache<int>>();
 
+            context.ObjectCacheConfiguration.Returns(cacheConfiguration);
+
             AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
             abstractTypeCreationContext.RequestedType.Returns(type);
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service, cacheConfiguration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
 
             cacheConfiguration.ObjectCache.GetObject(args).ReturnsForAnyArgs(new StubClass());
@@ -75,10 +77,12 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingRes
             AbstractObjectCacheConfiguration cacheConfiguration = Substitute.For<AbstractObjectCacheConfiguration>();
             cacheConfiguration.ObjectCache = Substitute.For<AbstractObjectCache<int>>();
 
+            context.ObjectCacheConfiguration.Returns(cacheConfiguration);
+
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service, cacheConfiguration);
+            ObjectConstructionArgs args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
             cacheConfiguration.ObjectCache.ContansObject(args).ReturnsForAnyArgs(false);
 

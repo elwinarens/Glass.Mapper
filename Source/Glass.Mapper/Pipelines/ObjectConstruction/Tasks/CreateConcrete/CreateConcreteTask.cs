@@ -47,7 +47,7 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
                 args.ObjectOrigin = ObjectOrigin.CreateConcrete;                
             }
 
-            if (args.DisableCache || args.ObjectCacheConfiguration == null)
+            if (args.DisableCache || args.Context.ObjectCacheConfiguration == null)
             {
                 args.AbortPipeline();
             }

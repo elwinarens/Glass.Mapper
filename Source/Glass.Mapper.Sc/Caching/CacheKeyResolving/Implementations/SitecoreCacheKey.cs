@@ -16,7 +16,7 @@ namespace Glass.Mapper.Sc.Caching.CacheKeyResolving.Implementations
 
         public override bool Equals(CacheKey<Guid> other)
         {
-            return other.RevisionId == this.RevisionId && other.Database == this.Database && other.Type == this.Type;
+            return other.Id.Equals(this.Id) && other.RevisionId.Equals(this.RevisionId) && other.Database == this.Database && other.Type == this.Type;
         }
     }
 }

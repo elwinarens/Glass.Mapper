@@ -14,7 +14,7 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction
         /// </summary>
         public AbstractTypeConfiguration Configuration { get; private set; }
 
-        public AbstractObjectCacheConfiguration ObjectCacheConfiguration { get; private set; }
+        
 
         public bool DisableCache { get; internal set; }
 
@@ -37,17 +37,6 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction
             AbstractTypeCreationContext = abstractTypeCreationContext;
             Configuration = configuration;
             Service = service;
-        }
-
-        public ObjectConstructionArgs(
-            Context context,
-            AbstractTypeCreationContext abstractTypeCreationContext,
-            AbstractTypeConfiguration configuration,
-            IAbstractService service,
-            AbstractObjectCacheConfiguration objectCacheConfiguration)
-            : this(context, abstractTypeCreationContext, configuration, service)
-        {
-            ObjectCacheConfiguration = objectCacheConfiguration;
         }
 
        

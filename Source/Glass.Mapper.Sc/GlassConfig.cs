@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Glass.Mapper.Caching.CacheKeyResolving;
@@ -27,7 +24,7 @@ using Glass.Mapper.Sc.DataMappers;
 using Glass.Mapper.Caching.ObjectCaching.Implementations;
 using Glass.Mapper.Sc.DataMappers.SitecoreQueryParameters;
 
-namespace Glass.Mapper.Sc.Integration
+namespace Glass.Mapper.Sc
 {
     public class GlassConfig : GlassCastleConfigBase
     {

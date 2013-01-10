@@ -42,13 +42,15 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingSav
 
             cacheConfiguration.ObjectCache = Substitute.For<AbstractObjectCache<int>>(cacheKeyResolver);
 
+            context.ObjectCacheConfiguration.Returns(cacheConfiguration);
+
             AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
             abstractTypeCreationContext.RequestedType.Returns(type);
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;
 
-            var args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service, cacheConfiguration);
+            var args = new ObjectConstructionArgs(context, abstractTypeCreationContext, configuration, service);
 
             args.Result = new StubClass();
             cacheKeyResolver.GetKey(args).ReturnsForAnyArgs(Substitute.For<CacheKey<int>>());

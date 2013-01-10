@@ -6,34 +6,39 @@ namespace Glass.Mapper.Caching.ObjectCaching.Implementations
 {
     public class CacheTable<TIdType> : AbstractObjectCache<TIdType>
     {
-        private static volatile Hashtable _table = new Hashtable();
+        private volatile Hashtable _table = new Hashtable();
+
+        public CacheTable():base()
+        {
+        }
 
         public CacheTable(AbstractCacheKeyResolver<TIdType> cacheKeyResolver)
             : base(cacheKeyResolver)
         {
         }
 
-        public override object GetObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
+        public CacheTable(string baseCacheKey)
+            : base(baseCacheKey)
+        {
+        }
+
+        protected override object InternalGetObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
         {
             return _table[base.CacheKeyResolver.GetKey(args)];
         }
 
-        public override bool ContansObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
+        protected override bool InternalContansObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
         {
             return _table.ContainsKey(base.CacheKeyResolver.GetKey(args));
         }
 
-        public override bool AddObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
+        protected override void InternalAddObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
         {
-            if (args.Result == null)
-                return false;
-
             _table.Add(base.CacheKeyResolver.GetKey(args), args.Result);
-            return true;
         }
 
 
-        public override bool ClearCache()
+        protected override bool InternalClearCache()
         {
             try
             {

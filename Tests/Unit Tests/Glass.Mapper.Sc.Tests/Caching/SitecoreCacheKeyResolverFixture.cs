@@ -51,7 +51,7 @@ namespace Glass.Mapper.Sc.Tests.Caching
 
             //Assert
 
-            Assert.AreEqual(new CacheKey(revistionId, "master", type), cacheKey);
+            Assert.AreEqual(new SitecoreCacheKey(sitecoreItem.ID.Guid, revistionId, "master", type), cacheKey);
         }
 
         #region Stubs
