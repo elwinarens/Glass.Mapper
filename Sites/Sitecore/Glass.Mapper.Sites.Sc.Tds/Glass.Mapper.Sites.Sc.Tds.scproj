@@ -44,6 +44,12 @@
     <InstallSitecoreConnector>True</InstallSitecoreConnector>
     <OutputPath>.\Debug - Aaron\</OutputPath>
   </PropertyGroup>
+    <SitecoreDeployFolder>F:\Glass\Glass.Mapper\Sites\Sitecore\Glass.Mapper.Sites.Sc</SitecoreDeployFolder>
+    <SitecoreWebUrl>http://sitecore.glass.com</SitecoreWebUrl>
+    <SitecoreAccessGuid>fd21ce01-25b5-4388-a335-6211a7a211b9</SitecoreAccessGuid>
+    <InstallSitecoreConnector>True</InstallSitecoreConnector>
+    <OutputPath>bin\Debug - Aaron\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <AssemblyAttributes Include="AssemblyFileVersion">
       <Value>$(AssemblyFileVersion)</Value>
