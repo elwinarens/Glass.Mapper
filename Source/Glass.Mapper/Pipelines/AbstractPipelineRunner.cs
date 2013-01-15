@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glass.Mapper.Profilers;
 
 namespace Glass.Mapper.Pipelines
 {
@@ -18,6 +19,7 @@ namespace Glass.Mapper.Pipelines
 
         public IEnumerable<K> Tasks { get { return _tasks; } }
 
+        public IPerformanceProfiler Profiler { get; set; }
 
         public AbstractPipelineRunner()
         {
@@ -26,6 +28,7 @@ namespace Glass.Mapper.Pipelines
         public AbstractPipelineRunner(IEnumerable<K> tasks)
         {
             _tasks = tasks;
+            Profiler = new NullProfiler();
         }
 
         /// <summary>
@@ -38,7 +41,13 @@ namespace Glass.Mapper.Pipelines
             {
                 foreach (var task in _tasks)
                 {
+#if DEBUG
+                    Profiler.Start(task.GetType().FullName);
+#endif
                     task.Execute(args);
+#if DEBUG
+                    Profiler.End(task.GetType().FullName);
+#endif 
                     if (args.IsAborted)
                         break;
                 }
