@@ -1,4 +1,4 @@
-﻿#if NCRUNCH
+#if NCRUNCH
 #else
 
 using NUnit.Framework;
