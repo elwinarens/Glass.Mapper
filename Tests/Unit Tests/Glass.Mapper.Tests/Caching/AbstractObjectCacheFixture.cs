@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Glass.Mapper.Caching.CacheKeyResolving;
 using Glass.Mapper.Caching.ObjectCaching;
+using Glass.Mapper.Caching.ObjectCaching.Exceptions;
 using Glass.Mapper.Caching.ObjectCaching.Implementations;
 using Glass.Mapper.Pipelines.ObjectConstruction;
 using NSubstitute;
@@ -10,7 +13,7 @@ using NUnit.Framework;
 namespace Glass.Mapper.Tests.Caching
 {
     [TestFixture]
-    public class ObjectCachingFixture
+    public class AbstractObjectCacheFixture
     {
         private CacheKey<int> _cacheKey;
         private ObjectConstructionArgs _args;
@@ -57,7 +60,6 @@ namespace Glass.Mapper.Tests.Caching
 
             var test = new StubClass();
             test.MyProperty = "Can_Add_Object";
-            var templateString = "templateString";
             var key = "Can_Add_ObjectKey";
             
             _args.Result.Returns(test);
@@ -66,55 +68,34 @@ namespace Glass.Mapper.Tests.Caching
 
             objectCache.AddObject(_args);
             Assert.IsTrue(objectCache.ContansObject(_args));
+            Assert.AreSame(objectCache.GetObject(_args), test);
         }
 
-        
-        //[Test]
-        //[TestCase(typeof(CacheTable<int>))]
-        //[TestCase(typeof(MemoryCache<int>))]
-        //public void Does_Remember_Template(Type type)
-        //{
-        //    var baseKey = "Does_Remember_Template";
-
-        //    var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
-
-        //    var test = new Test();
-        //    test.MyProperty = "Can_Add_Object";
-        //    var templateString = "templateString";
-        //    var key = "CreateKey";
-
-        //    objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
-
-        //    Assert.IsTrue(objectCache.GetKeys(templateString, ObjectCachePriority.High).Any());
-        //}
 
         [Test]
         [TestCase(typeof(CacheTable<int>))]
         [TestCase(typeof(MemoryCache<int>))]
         public void Can_Add_Thread_Safe(Type type)
         {
-            var baseKey = "Can_Add_Thread_Safe";
-
             var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver<int>>();
             var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { cacheKeyResolver });
-            var templateString = "templateString";
             var key = "Can_Add_Thread_Safe";
 
             Parallel.For(0, 10, i =>
             {
-                for (int j = 0; j < 100; j++)
+
+                for (var j = 0; j < 100; j++)
                 {
-                    var test = new StubClass();
-                    test.MyProperty = key + j + i;
+                    var localKey = key + "_" + j + "_" + i;
+                    var test = new StubClass { MyProperty = localKey };
 
                     var cacheKey = Substitute.For<CacheKey<int>>();
 
                     var args = Substitute.For<ObjectConstructionArgs>();
-                    cacheKey.ToString().Returns(x => key + j + i);
+                    cacheKey.ToString().Returns(x => localKey);
                     cacheKeyResolver.GetKey(args).Returns(x => cacheKey);
-                    cacheKeyResolver.GetKey(args).ToString().Returns(x => key + j + i);
+                    cacheKeyResolver.GetKey(args).ToString().Returns(x => localKey);
 
-                    
                     args.Result = test;
                     
                     
@@ -126,685 +107,540 @@ namespace Glass.Mapper.Tests.Caching
         }
 
 
-        //[Test]
-        //[TestCase(typeof(CacheTable<int>))]
-        //[TestCase(typeof(MemoryCache<int>))]
-        //public void Can_Add_Object_To_Multiple_Releated_Cache(Type type)
-        //{
-        //    var baseKey = "Can_Add_Object_To_Multiple_Releated_Cache";
 
-        //    var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Add_To_Related_Cache(Type type)
+        {
+            var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver<int>>();
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { cacheKeyResolver });
+
+            var test = new List<StubClass>
+                {
+                    new StubClass(),
+                    new StubClass()
+                };
+
+            objectCache.AddToRelatedCache("Can_Add_To_Related_Cache", "releatedKey", test);
+        }
+
+
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Add_To_Related_CacheThread_Safe(Type type)
+        {
+            var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver<int>>();
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { cacheKeyResolver });
+
 
-        //    var test = new Test();
-        //    test.MyProperty = "Can_Add_Object";
-        //    var templateStrings = new List<string>() {"templateString1", "templateString2"};
+            Parallel.For(0, 10, i =>
+                {
+                    for (int j = 0; j < 100; j++)
+                    {
+                        var test = new List<StubClass>
+                            {
+                                new StubClass(),
+                                new StubClass()
+                            };
+
+                        objectCache.AddToRelatedCache("Can_Add_To_Related_Cache" + i + j, "releatedKey", test);
+                    }
+                });
+
 
-        //    var key = "Can_Add_Object_To_Multiple_Releated_Cache";
+        }
 
-        //    objectCache.Add<Test>(key, test, templateStrings, ObjectCachePriority.High);
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Add_To_Multiple_Related_Cache(Type type)
+        {
+            var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver<int>>();
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { cacheKeyResolver });
 
-        //    Assert.AreEqual(test, objectCache.Get<Test>(key));
-        //}
+            var test = new List<StubClass>
+                {
+                    new StubClass(),
+                    new StubClass()
+                };
+
+            objectCache.AddToRelatedCache("Can_Add_To_Related_Cache", new[] { "releatedKey1", "releatedKey2" }, test);
+        }
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Add_Object_To_Multiple_Releated_Cache_Thread_Safe(Type type)
-       // {
-       //     var baseKey = "Can_Add_Object_To_Multiple_Releated_Cache_Thread_Safe";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Add_To_Multiple_Related_CacheThread_Safe(Type type)
+        {
+            var cacheKeyResolver = Substitute.For<AbstractCacheKeyResolver<int>>();
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { cacheKeyResolver });
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
-       //     var templateStrings = new List<string>() { "templateString1", "templateString2" };
 
-       //     var key = "Can_Add_Object_To_Multiple_Releated_Cache_Thread_Safe";
+            Parallel.For(0, 10, i =>
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    var test = new List<StubClass>
+                            {
+                                new StubClass(),
+                                new StubClass()
+                            };
 
-       //     Parallel.For(0, 10, i =>
-       //     {
-       //         for (int j = 0; j < 100; j++)
-       //         {
-       //             objectCache.Add<Test>(key + i + j, test, templateStrings, ObjectCachePriority.High);
+                    objectCache.AddToRelatedCache("Can_Add_To_Related_Cache" + i + j, "releatedKey", test);
+                }
+            });
+        }
 
-       //             Assert.AreEqual(test, objectCache.Get<Test>(key + i + j));
-       //         }
-       //     });
-       // }
 
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Clear_Object_In_Multiple_Related_Cache(Type type)
+        {
+            var baseKey = "Can_Clear_Object_In_Multiple_Related_Cache";
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Clear_Object_In_Multiple_Releated_Cache(Type type)
-       // {
-       //     var baseKey = "Can_Clear_Object_In_Multiple_Releated_Cache";
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new object[] { baseKey });
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var test = new StubClass {MyProperty = "Can_Add_Object"};
+            var templateStrings = new List<string>() { "templateString1", "templateString2" };
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
-       //     var templateStrings = new List<string>() { "templateString1", "templateString2" };
+            var key = "Can_Clear_Object_In_Multiple_Related_Cache";
 
-       //     var key = "Can_Clear_Object_In_Multiple_Releated_Cache";
+            objectCache.AddToRelatedCache(key, templateStrings, test);
 
-       //     objectCache.Add<Test>(key, test, templateStrings, ObjectCachePriority.High);
+            Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0]));
+            Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(key) == null);
 
-       //     Assert.AreEqual(test, objectCache.Get<Test>(key));
-       //     Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0], ObjectCachePriority.High));
-       //     Assert.IsTrue(objectCache.Get<Test>(key) == null);
+            objectCache.AddToRelatedCache(key, templateStrings, test);
 
-       //     objectCache.Add<Test>(key, test, templateStrings, ObjectCachePriority.High);
+            Assert.AreEqual(objectCache.GetFromRelatedCache<StubClass>(key), test);
+            Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[1]));
+            Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(key) == null);
+        }
 
-       //     Assert.AreEqual(objectCache.Get<Test>(key), test);
-       //     Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[1], ObjectCachePriority.High));
-       //     Assert.IsTrue(objectCache.Get<Test>(key) == null);
-       // }
 
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Clear_Object_In_Multiple_Related_Cache_Thread_Safe(Type type)
+        {
+            var baseKey = "Can_Add_Object_To_Multiple_Related_Cache_Thread_Safe";
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Clear_Object_In_Multiple_Releated_Cache_Thread_Safe(Type type)
-       // {
-       //     var baseKey = "Can_Add_Object_To_Multiple_Releated_Cache_Thread_Safe";
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var test = new StubClass { MyProperty = "Can_Add_Object" };
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
-            
-       //     var key = "Can_Add_Object_To_Multiple_Releated_Cache_Thread_Safe";
+            var key = "Can_Add_Object_To_Multiple_Related_Cache_Thread_Safe";
 
-       //     Parallel.For(0, 10, i =>
-       //     {
-       //         for (int j = 0; j < 100; j++)
-       //         {
-       //             var templateStrings = new List<string>() { "templateString1" + i, "templateString2" + i };
+            Parallel.For(0, 10, i =>
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    var localKey = key + i + j;
+                    var templateStrings = new List<string>() { "templateString1" + i, "templateString2" + i };
 
-       //             objectCache.Add<Test>(key + i + j, test, templateStrings, ObjectCachePriority.High);
+                    objectCache.AddToRelatedCache(localKey, templateStrings, test);
 
-       //             Assert.AreEqual(test, objectCache.Get<Test>(key + i + j));
-       //             Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0], ObjectCachePriority.High));
-       //             Assert.IsNull(objectCache.Get<Test>(key + i + j));
+                    Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0]));
+                    Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(localKey ) == null);
 
-       //             objectCache.Add<Test>(key + i + j, test, templateStrings, ObjectCachePriority.High);
+                    objectCache.AddToRelatedCache(localKey, templateStrings, test);
 
-       //             Assert.AreEqual(test, objectCache.Get<Test>(key + i + j));
-       //             Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[1], ObjectCachePriority.High));
-       //             Assert.IsTrue(objectCache.Get<Test>(key + i + j) == null);
-       //         }
-       //     });
-       // }
+                    Assert.AreEqual(objectCache.GetFromRelatedCache<StubClass>(localKey), test);
+                    Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[1]));
+                    Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(localKey) == null);
+                }
+            });
+        }
 
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Clear_Releated_Cache_With_Multiple_Object_In_Multiple_Releated_Cache(Type type)
-       // {
-       //     var baseKey = "Can_Clear_Releated_Cache_With_Multiple_Object_In_Multiple_Releated_Cache";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Clear_Related_Cache_With_Multiple_Object_In_Multiple_Related_Cache(Type type)
+        {
+            var baseKey = "Can_Clear_Related_Cache_With_Multiple_Object_In_Multiple_Related_Cache";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object1";
+            var test = new StubClass { MyProperty = "Can_Add_Object1" };
 
-       //     var test2 = new Test();
-       //     test.MyProperty = "Can_Add_Object2";
+            var test2 = new StubClass { MyProperty = "Can_Add_Object2" };
 
-       //     var templateStrings = new List<string>() { "templateString1", "templateString2" };
+            var templateStrings = new List<string>() { "templateString1", "templateString2" };
 
-       //     var key = "Can_Clear_Object_In_Multiple_Releated_Cache";
-       //     var key2 = "Can_Clear_Object_In_Multiple_Releated_Cache2";
+            var key = "Can_Clear_Object_In_Multiple_Related_Cache";
+            var key2 = "Can_Clear_Object_In_Multiple_Related_Cache2";
 
-       //     objectCache.Add<Test>(key, test, templateStrings, ObjectCachePriority.High);
-       //     objectCache.Add<Test>(key2, test2, templateStrings, ObjectCachePriority.High);
+            objectCache.AddToRelatedCache(key, templateStrings, test);
+            objectCache.AddToRelatedCache(key2, templateStrings, test2);
 
-       //     Assert.AreEqual(objectCache.Get<Test>(key), test);
-       //     Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0], ObjectCachePriority.High));
-       //     Assert.IsNull(objectCache.Get<Test>(key));
-       //     Assert.IsNull(objectCache.Get<Test>(key2));
-       // }
+            Assert.AreEqual(objectCache.GetFromRelatedCache<StubClass>(key), test);
+            Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0]));
+            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key2));
+        }
 
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Does_Clearing_One_Releated_Cache_Clear_Another(Type type)
-       // {
-       //     var baseKey = "Does_Clearing_One_Releated_Cache_Clear_Another";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Does_Clearing_One_Related_Cache_Clear_Another(Type type)
+        {
+            var baseKey = "Does_Clearing_One_Related_Cache_Clear_Another";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object1";
 
-       //     var test2 = new Test();
-       //     test.MyProperty = "Can_Add_Object2";
+            var test = new StubClass { MyProperty = "Can_Add_Object1" };
 
-       //     var templateStrings = new List<string>() { "templateString1", "templateString2" };
+            var test2 = new StubClass { MyProperty = "Can_Add_Object2" };
 
-       //     var key = "Can_Clear_Object_In_Multiple_Releated_Cache";
-       //     var key2 = "Can_Clear_Object_In_Multiple_Releated_Cache2";
+            var templateStrings = new List<string>() { "templateString1", "templateString2" };
 
-       //     objectCache.Add<Test>(key, test, templateStrings, ObjectCachePriority.High);
-       //     objectCache.Add<Test>(key2, test2, templateStrings, ObjectCachePriority.High);
+            var key = "Can_Clear_Object_In_Multiple_Related_Cache";
+            var key2 = "Can_Clear_Object_In_Multiple_Related_Cache2";
 
-       //     Assert.IsNotNull(objectCache.GetReleatedKeys(ObjectCachePriority.High));
-       //     Assert.AreEqual(templateStrings[0], objectCache.GetReleatedKeys(ObjectCachePriority.High).First().Key);
+            objectCache.AddToRelatedCache(key, templateStrings, test);
+            objectCache.AddToRelatedCache(key2, templateStrings, test2);
 
-       //     Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0], ObjectCachePriority.High));
+            Assert.IsNotNull(objectCache.GetRelatedKeys());
+            Assert.AreEqual(templateStrings[0], objectCache.GetRelatedKeys().First().Key);
 
-       //     Assert.IsNotNull(objectCache.GetReleatedKeys(ObjectCachePriority.High));
+            Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0]));
 
-       //     Assert.IsNull(objectCache.Get<Test>(key));
-       //     Assert.IsNull(objectCache.Get<Test>(key2));
+            Assert.IsNotNull(objectCache.GetRelatedKeys());
 
-       //     //Assert.IsFalse(objectCache.GetReleatedKeys(ObjectCachePriority.High).Keys.con);
+            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key2));
 
-       // }
+        }
 
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Clear_Releated_Cache(Type type)
-       // {
-       //     var baseKey = "Can_Clear_Releated_Cache";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Clear_Related_Cache(Type type)
+        {
+            var baseKey = "Can_Clear_Related_Cache";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
-       //     var templateString = "templateString";
-       //     var key = "Can_Clear_Releated_CacheKey";
+            var test = new StubClass { MyProperty = "Can_Add_Object1" };
+            var templateString = "templateString";
+            var key = "Can_Clear_Related_CacheKey";
 
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
+            objectCache.AddToRelatedCache(key, templateString, test);
 
-       //     Assert.AreEqual(objectCache.Get<Test>(key), test);
-       //     Assert.IsTrue(objectCache.ClearRelatedCache(templateString, ObjectCachePriority.High));
-       //     Assert.IsTrue(objectCache.Get<Test>(key) == null);
-       // }
+            Assert.AreEqual(objectCache.GetFromRelatedCache<StubClass>(key), test);
+            Assert.IsTrue(objectCache.ClearRelatedCache(templateString));
+            Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(key) == null);
+        }
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Clear_Releated_Thread_Safe(Type type)
-       // {
-       //     var baseKey = "Can_Clear_Releated_Thread_Safe";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Clear_Related_Thread_Safe(Type type)
+        {
+            var baseKey = "Can_Clear_Related_Thread_Safe";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "Can_Clear_Releated_Thread_SafetemplateString";
-       //     var key = "Can_Clear_Releated_Thread_Safe";
+            var templateString = "Can_Clear_Related_Thread_SafetemplateString";
+            var key = "Can_Clear_Related_Thread_Safe";
 
-       //     Parallel.For(0, 10, i =>
-       //     {
-       //         for (int j = 0; j < 100; j++)
-       //         {
-       //             var test = new Test();
-       //             test.MyProperty = "Can_Clear_Releated_Thread_Safe";
+            Parallel.For(0, 10, i =>
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    var localKey = key + i + j;
+                    var localtemplateString = templateString + i;
+                    var test = new StubClass { MyProperty = "Can_Clear_Related_Thread_Safe" };
 
-       //             objectCache.Add<Test>(key + i + j, test, templateString + i, ObjectCachePriority.High);
+                    objectCache.AddToRelatedCache(localKey, localtemplateString, test);
 
-       //             Assert.AreEqual(test, objectCache.Get<Test>(key + i + j));
-       //             Assert.IsTrue(objectCache.ClearRelatedCache(templateString + i, ObjectCachePriority.High));
-       //             Assert.IsNull(objectCache.Get<Test>(key + i + j));
-       //         }
-       //     });
-       // }
+                    Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.IsTrue(objectCache.ClearRelatedCache(localtemplateString));
+                    Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(localKey));
+                }
+            });
+        }
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Get_Object_By_Key(Type type)
-       // {
-       //     var baseKey = "Can_Get_Object_By_Key";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Get_Object_By_Key(Type type)
+        {
+            var baseKey = "Can_Get_Object_By_Key";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "templateString";
-       //     var key = "Cant_Add_NullKey";
+            var templateString = "templateString";
+            var key = "Cant_Add_NullKey";
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
+            var test = new StubClass { MyProperty = "Can_Get_Object_By_Key" };
 
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
+            objectCache.AddToRelatedCache(key, templateString, test);
 
-       //     Assert.AreEqual(test, objectCache.Get<Test>(key));
-       // }
+            Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(key));
+        }
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Get_Object_By_Key_Thread_Safe(Type type)
-       // {
-       //     var baseKey = "Can_Get_Object_By_Key_Thread_Safe";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Get_Object_By_Key_Thread_Safe(Type type)
+        {
+            var baseKey = "Can_Get_Object_By_Key_Thread_Safe";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "templateString";
-       //     var key = "CreateKey";
+            var templateString = "templateString";
+            var key = "CreateKey";
 
-       //     Parallel.For(0, 10, i =>
-       //     {
-       //         for (int j = 0; j < 100; j++)
-       //         {
-       //             var test = new Test();
-       //             test.MyProperty = "Can_Add_Object";
+            Parallel.For(0, 10, i =>
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    var localKey = key + i + j;
+                    var test = new StubClass { MyProperty = "Can_Get_Object_By_Key_Thread_Safe" };
 
-       //             objectCache.Add<Test>(key + i + j, test, templateString, ObjectCachePriority.High);
+                    objectCache.AddToRelatedCache(localKey, templateString, test);
 
-       //             Assert.AreEqual(test, objectCache.Get<Test>(key + i + j));
-       //         }
-       //     });
-       // }
+                    Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                }
+            });
+        }
 
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Remove_Object_By_Key(Type type)
-       // {
-       //     var baseKey = "Can_Remove_Object_By_Key";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Remove_Object_By_Key(Type type)
+        {
+            var baseKey = "Can_Remove_Object_By_Key";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "templateString";
-       //     var key = "Cant_Add_NullKey";
+            var templateString = "templateString";
+            var key = "Cant_Add_NullKey";
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
+            var test = new StubClass { MyProperty = "Can_Remove_Object_By_Key" };
 
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
+            objectCache.AddToRelatedCache(key, templateString, test);
 
-       //     Assert.AreEqual(objectCache.Get<Test>(key), test);
+            Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(key));
 
-       //     objectCache.Remove(key);
+            objectCache.RemoveFromRelatedCache(key);
 
-       //     Assert.IsNull(objectCache.Get<Test>(key));
-       //     Assert.IsNotNull(objectCache.GetReleatedKeys(ObjectCachePriority.High));
-       //     Assert.IsFalse(objectCache.GetReleatedKeys(ObjectCachePriority.High).ContainsKey(templateString));
-       // }
+            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.IsNotNull(objectCache.GetRelatedKeys());
+            Assert.IsFalse(objectCache.GetRelatedKeys().ContainsKey(templateString));
+        }
 
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Remove_Object_By_Key_Thread_Safe(Type type)
-       // {
-       //     var baseKey = "Can_Remove_Object_By_Key_Thread_Safe";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Can_Remove_Object_By_Key_Thread_Safe(Type type)
+        {
+            var baseKey = "Can_Remove_Object_By_Key_Thread_Safe";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "templateString";
-       //     var key = "Can_Remove_Object_By_Key_Thread_SafeKey";
+            var templateString = "templateString";
+            var key = "Can_Remove_Object_By_Key_Thread_SafeKey";
 
-       //     Parallel.For(0, 10, i =>
-       //     {
-       //         for (int j = 0; j < 100; j++)
-       //         {
-       //             var test = new Test();
-       //             test.MyProperty = "Can_Add_Object";
+            Parallel.For(0, 10, i =>
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    var localKey = key + i + j;
+                    var test = new StubClass { MyProperty = "Can_Get_Object_By_Key_Thread_Safe" };
 
-       //             objectCache.Add<Test>(key + i + j, test, templateString, ObjectCachePriority.High);
+                    objectCache.AddToRelatedCache(localKey, templateString, test);
 
-       //             Assert.AreEqual(test, objectCache.Get<Test>(key + i + j));
+                    Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
 
-       //             //objectCache.Remove(key + i + j);
+                    objectCache.RemoveFromRelatedCache(localKey);
 
-       //             //Assert.IsNull(objectCache.Get<Test>(key + i + j));
-       //         }
-       //     });
-       // }
+                    Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(localKey));
+                }
+            });
+        }
 
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Get_ObjectCachePriority_ReleatedKeys(Type type)
-       // {
-       //     var baseKey = "Get_ObjectCachePriority_ReleatedKeys";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Get_ObjectCachePriority_RelatedKeys(Type type)
+        {
+            var baseKey = "Get_ObjectCachePriority_RelatedKeys";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "templateString";
-       //     var key = "Cant_Add_NullKey";
+            var templateString = "templateString";
+            var key = "Get_ObjectCachePriority_RelatedKeys";
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
+            var test = new StubClass { MyProperty = "Get_ObjectCachePriority_RelatedKeys" };
 
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
+            objectCache.AddToRelatedCache(key, templateString, test);
 
-       //     Assert.IsNotNull(objectCache.GetReleatedKeys(ObjectCachePriority.High));
-       //     Assert.AreEqual(templateString, objectCache.GetReleatedKeys(ObjectCachePriority.High).First().Key);
-       // }
+            Assert.IsNotNull(objectCache.GetRelatedKeys());
+            Assert.AreEqual(templateString, objectCache.GetRelatedKeys().First().Key);
+        }
 
-       // [Test]
-       // [ExpectedException(typeof(DuplicatedKeyObjectCacheException))]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Cant_Add_Two_Objects_With_Same_Key(Type type)
-       // {
-       //     var baseKey = "Cant_Add_Two_Objects_With_Same_Key";
+        [Test]
+        [ExpectedException(typeof(DuplicatedKeyObjectCacheException))]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Cant_Add_Two_Objects_With_Same_Key(Type type)
+        {
+            var baseKey = "Cant_Add_Two_Objects_With_Same_Key";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "templateString";
-       //     var key = "Cant_Add_NullKey";
+            var templateString = "templateString";
+            var key = "Cant_Add_Two_Objects_With_Same_Key";
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
+            var test = new StubClass { MyProperty = "Cant_Add_Two_Objects_With_Same_Key" };
+            var test1 = new StubClass { MyProperty = "Cant_Add_Two_Objects_With_Same_Key" };
 
-       //     var test1 = new Test();
-       //     test.MyProperty = "Can_Add_Object";
 
-       //     Assert.IsTrue(objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High));
-       //     Assert.IsFalse(objectCache.Add<Test>(key, test1, templateString, ObjectCachePriority.High));
-       // }
+            objectCache.AddToRelatedCache(key, templateString, test);
+            objectCache.AddToRelatedCache(key, templateString, test1);
+        }
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Clearing_Differnt_Releated_Cache_Wont_Remove_Object(Type type)
-       // {
-       //     var baseKey = "Clearing_Differnt_Releated_Cache_Wont_Remove_Object";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Clearing_Differnt_Related_Cache_Wont_Remove_Object(Type type)
+        {
+            var baseKey = "Clearing_Differnt_Related_Cache_Wont_Remove_Object";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "templateString";
-       //     var key = "Clearing_Differnt_Releated_Cache_Wont_Remove_Object";
+            var templateString = "templateString";
+            var key = "Clearing_Differnt_Related_Cache_Wont_Remove_Object";
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
+            var test = new StubClass { MyProperty = "Clearing_Differnt_Related_Cache_Wont_Remove_Object" };
 
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
+            objectCache.AddToRelatedCache(key, templateString, test);
 
-       //     Assert.AreSame(test, objectCache.Get<Test>(key));
-       //     Assert.IsTrue(objectCache.GetReleatedKeys(ObjectCachePriority.High).Any(x => x.Key == templateString));
+            Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
-       //     Assert.IsTrue(objectCache.ClearRelatedCache("Another_Clearing_Differnt_Releated_Cache_Wont_Remove_Object", ObjectCachePriority.High));
+            Assert.IsTrue(objectCache.ClearRelatedCache(templateString));
 
-       //     Assert.IsTrue(objectCache.GetReleatedKeys(ObjectCachePriority.High).Any(x => x.Key == templateString));
+            Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
-       // }
+        }
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Add_To_Cache_Clear_Releated_And_Readd(Type type)
-       // {
-       //     var baseKey = "Add_To_Cache_Clear_Releated_And_Readd";
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Add_To_Cache_Clear_Related_And_Readd(Type type)
+        {
+            var baseKey = "Add_To_Cache_Clear_Related_And_Readd";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var templateString = "templateString";
-       //     var key = "Cant_Add_NullKey";
+            var templateString = "templateString";
+            var key = "Cant_Add_NullKey";
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
 
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
+            var test = new StubClass { MyProperty = "Add_To_Cache_Clear_Related_And_Readd" };
 
-       //     Assert.AreSame(test, objectCache.Get<Test>(key));
-       //     Assert.IsTrue(objectCache.GetReleatedKeys(ObjectCachePriority.High).Any(x => x.Key == templateString));
+            objectCache.AddToRelatedCache(key, templateString, test);
 
-       //     Assert.IsTrue(objectCache.ClearRelatedCache(templateString, ObjectCachePriority.High));
+            Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
+            Assert.IsTrue(objectCache.ClearRelatedCache(templateString));
 
-       //     Assert.AreSame(test, objectCache.Get<Test>(key));
-       //     Assert.IsTrue(objectCache.GetReleatedKeys(ObjectCachePriority.High).Any(x => x.Key == templateString));
+            objectCache.AddToRelatedCache(key, templateString, test);
 
-       // }
+            Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
+        }
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Add_To_Cache_Clear_Releated_And_Readd_Thread_Safe(Type type)
-       // {
-       //     var baseKey = "Add_To_Cache_Clear_Releated_And_Readd_Thread_Safe";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+        [Test]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Add_To_Cache_Clear_Related_And_Readd_Thread_Safe(Type type)
+        {
+            var baseKey = "Add_To_Cache_Clear_Related_And_Readd_Thread_Safe";
 
-       //     var templateString = "templateString";
-       //     var key = "Add_To_Cache_Clear_Releated_And_Readd_Thread_Safe";
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object";
+            var templateString = "templateString";
+            var key = "Add_To_Cache_Clear_Related_And_Readd_Thread_Safe";
 
-       //     Parallel.For(0, 2, i =>
-       //     {
-       //         objectCache.Add<Test>(key + i, test, templateString + i, ObjectCachePriority.High);
+            var test = new StubClass { MyProperty = "Add_To_Cache_Clear_Related_And_Readd" };
 
-       //         Assert.AreSame(test, objectCache.Get<Test>(key + i));
-       //         Assert.IsTrue(objectCache.DoesReleatedTemplateIDExist(templateString + i, ObjectCachePriority.High));
 
-       //         Assert.IsTrue(objectCache.ClearRelatedCache(templateString + i, ObjectCachePriority.High));
+            Parallel.For(0, 100, i =>
+                {
+                    var localKey = key + i;
 
-       //         objectCache.Add<Test>(key + i, test, templateString + i, ObjectCachePriority.High);
+                    objectCache.AddToRelatedCache(localKey, templateString, test);
 
-       //         Assert.AreSame(test, objectCache.Get<Test>(key + i));
-       //         Assert.IsTrue(objectCache.DoesReleatedTemplateIDExist(templateString + i, ObjectCachePriority.High));
-                
-       //     });
+                    Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
-       // }
+                    Assert.IsTrue(objectCache.ClearRelatedCache(templateString));
 
-       // [Test]
-       // [ExpectedException(typeof(KeyNullOrEmptyObjectCacheException))]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Does_Empty_Key_Fail(Type type)
-       // {
-       //     var baseKey = "Does_Empty_Key_Fail";
+                    objectCache.AddToRelatedCache(localKey, templateString, test);
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+                    Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
+                });
 
-       //     var templateString = "templateString";
-       //     var key = "";
+        }
 
-       //     var test = new Test();
-       //     test.MyProperty = "Does_Empty_Key_Fail";
+        [Test]
+        [ExpectedException(typeof(KeyNullOrEmptyObjectCacheException))]
+        [TestCase(typeof(CacheTable<int>))]
+        [TestCase(typeof(MemoryCache<int>))]
+        public void Does_Empty_Key_Fail(Type type)
+        {
+            var baseKey = "Does_Empty_Key_Fail";
 
-       //     Assert.IsFalse(objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High));
-       // }
+            var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
 
+            var templateString = "templateString";
+            var key = "";
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Add_Colection(Type type)
-       // {
-       //     var baseKey = "Can_Add_Colection";
+            var test = new StubClass { MyProperty = "Add_To_Cache_Clear_Related_And_Readd" };
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
-            
-       //     var templateString = "templateString";
-       //     var key = "Can_Add_Colection";
 
-       //     var list = new List<string>() { "1", "2", "3", "4", "5" };
+            objectCache.AddToRelatedCache(key, templateString, test);
+        }
 
-       //     Assert.IsTrue(objectCache.Add<List<string>>(key, list, templateString, ObjectCachePriority.High));
-       //     Assert.AreEqual(list, objectCache.Get<List<string>>(key));
-       // }
 
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Rebuild_On_Remove(Type type)
-       // {
-       //     var baseKey = "Can_Add_Colection";
+        [Test]
+        [TestCase(typeof (CacheTable<int>))]
+        [TestCase(typeof (MemoryCache<int>))]
+        public void Can_Add_Colection(Type type)
+        {
+            var baseKey = "Can_Add_Colection";
 
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
+            var objectCache = (IAbstractObjectCache) System.Activator.CreateInstance(type, new[] {baseKey});
 
-       //     var templateString = "templateString";
-       //     var key = "Can_Add_Colection";
+            var templateString = "templateString";
+            var key = "Can_Add_Colection";
 
-       //     Func<List<string>> buildList = delegate()
-       //     { 
-       //         return new List<string>() { "1", "2", "3", "4", "5" }; 
-       //     };
+            var list = new List<string>() {"1", "2", "3", "4", "5"};
 
-       //     var list = buildList.Invoke();
-
-       //     Assert.IsTrue(objectCache.Add<List<string>>(key, list, templateString, ObjectCachePriority.High, buildList));
-       //     Assert.AreEqual(list, objectCache.Get<List<string>>(key));
-
-       //     objectCache.Remove(key);
-
-       //     Assert.AreEqual(list, objectCache.Get<List<string>>(key));
-       // }
-
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Will_Rebuild_On_Remove(Type type)
-       // {
-       //     var baseKey = "Can_Add_Colection";
-
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
-
-       //     var templateString = "templateString";
-       //     var key = "Can_Add_Colection";
-
-       //     Func<List<string>> buildList = delegate()
-       //     {
-       //         return new List<string>() { "1", "2", "3", "4", "5" };
-       //     };
-
-       //     var list = buildList.Invoke();
-
-       //     Assert.IsTrue(objectCache.Add<List<string>>(key, list, templateString, ObjectCachePriority.High, buildList));
-
-       //     Assert.IsTrue(objectCache.WillRebuildOnRemove(key));
-
-       // }
-
-
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       //// [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Add_Object_With_Custom_Timeout(Type type)
-       // {
-       //     var baseKey = "Can_Add_Object_With_Custom_Timeout";
-
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
-
-       //     var templateString = "templateString";
-       //     var key = "Can_Add_Object_With_Custom_Timeout";
-
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object_With_Custom_Timeout";
-
-       //     var ts = new TimeSpan(0, 0, 5);
-
-       //     objectCache.Add<Test>(key, test, templateString, ts);
-
-       //     Assert.AreEqual(test, objectCache.Get<Test>(key));
-       // }
-
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Add_Object_With_Custom_Timeout_Will_Expire(Type type)
-       // {
-       //     var baseKey = "Can_Add_Object_With_Custom_Timeout_Will_Expire";
-
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
-
-       //     var templateString = "templateString";
-       //     var key = "Can_Add_Object_With_Custom_Timeout_Will_Expire";
-
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Add_Object_With_Custom_Timeout_Will_Expire";
-
-       //     var ts = new TimeSpan(0, 0, 1);
-
-       //     objectCache.Add<Test>(key, test, templateString, ts);
-
-       //     //sleep some so the expiry is after now
-       //     Thread.Sleep(2000);
-
-       //     Assert.IsNull(objectCache.Get<Test>(key));
-       // }
-
-
-       // [Test]
-       // public void Can_Parse_String_To_ObjectCachePriority(Type type)
-       // {
-       //     Assert.AreEqual(ObjectCachePriority.High, ObjectCache.ParseObjectCachePriority("High"));
-       //     Assert.AreEqual(ObjectCachePriority.Medium, ObjectCache.ParseObjectCachePriority("Medium"));
-       //     Assert.AreEqual(ObjectCachePriority.Low, ObjectCache.ParseObjectCachePriority("Low"));
-       //     Assert.AreEqual(ObjectCachePriority.Custom, ObjectCache.ParseObjectCachePriority("Custom"));
-       // }
-
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Turn_Cache_Off(Type type)
-       // {
-       //     var baseKey = "Can_Turn_Cache_Off";
-
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new[] { baseKey });
-
-       //     var templateString = "templateString";
-       //     var key = "Type type";
-
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Turn_Cache_Off";
-
-       //     Assert.IsTrue(objectCache.UseCache);
-
-       //     objectCache.TurnCacheOff();
-
-       //     Assert.IsFalse(objectCache.UseCache);
-
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
-
-       //     Assert.IsNull(objectCache.Get<Test>(key));
-       // }
-
-
-       // [Test]
-       // [TestCase(typeof(CacheTable<int>))]
-       // [TestCase(typeof(MemoryCache<int>))]
-       // public void Can_Turn_Cache_On(Type type)
-       // {
-       //     var baseKey = "Can_Turn_Cache_Off";
-
-       //     var objectCache = (IAbstractObjectCache)System.Activator.CreateInstance(type, new object[] { baseKey});
-       //     objectCache.TurnCacheOff();
-
-       //     var templateString = "templateString";
-       //     var key = "Type type";
-
-       //     var test = new Test();
-       //     test.MyProperty = "Can_Turn_Cache_Off";
-
-       //     Assert.IsFalse(objectCache.UseCache);
-
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
-
-       //     Assert.IsNull(objectCache.Get<Test>(key));
-
-       //     objectCache.TurnCacheOn();
-
-       //     Assert.IsTrue(objectCache.UseCache);            
-
-       //     objectCache.Add<Test>(key, test, templateString, ObjectCachePriority.High);
-
-       //     Assert.AreEqual(test, objectCache.Get<Test>(key));
-       // }
-
-
-       // [Test]
-       // public void ObjectCachePriority_Medium_Returned_When_Parse_Invalid_String_To_ObjectCachePriority(Type type)
-       // {
-       //     Assert.AreEqual(ObjectCachePriority.Medium, ObjectCache.ParseObjectCachePriority("Null_Returned_When_Parse_Invalid_String_To_ObjectCachePriority"));
-       // }
+            objectCache.AddToRelatedCache(key, templateString, list);
+            Assert.AreEqual(list, objectCache.GetFromRelatedCache<StubClass>(key));
+        }
 
         #region Stubs
 

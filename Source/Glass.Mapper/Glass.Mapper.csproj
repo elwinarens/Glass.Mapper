@@ -67,10 +67,17 @@
     <Compile Include="Caching\CacheKeyResolving\CacheKeyResolver.cs" />
     <Compile Include="Caching\CacheKeyResolving\CannotGenerateKeyException.cs" />
     <Compile Include="Caching\CacheKeyResolving\ICacheKey.cs" />
+    <Compile Include="Caching\ObjectCaching\CacheInformation.cs" />
+    <Compile Include="Caching\ObjectCaching\Exceptions\DuplicatedKeyObjectCacheException.cs" />
+    <Compile Include="Caching\ObjectCaching\Exceptions\ObjectCacheException.cs" />
+    <Compile Include="Caching\ObjectCaching\Exceptions\ObjectForCachingNullObjectCacheException.cs" />
     <Compile Include="Caching\ObjectCaching\IAbstractObjectCache.cs" />
     <Compile Include="Caching\ObjectCaching\Implementations\CacheTable.cs" />
     <Compile Include="Caching\ObjectCaching\Implementations\MemoryCache.cs" />
     <Compile Include="Caching\ObjectCaching\AbstractObjectCache.cs" />
+    <Compile Include="Caching\ObjectCaching\Exceptions\KeyNullOrEmptyObjectCacheException.cs" />
+    <Compile Include="Caching\ObjectCaching\ReaderWriterLock.cs" />
+    <Compile Include="Caching\ObjectCaching\Exceptions\ReleatedTemplateIDNullOrEmptyObjectCacheException.cs" />
     <Compile Include="Caching\Proxy\CacheInterfaceMethodInterceptor.cs" />
     <Compile Include="Caching\Proxy\CacheMethodInterceptor.cs" />
     <Compile Include="Caching\Proxy\CacheProxyGenerator.cs" />

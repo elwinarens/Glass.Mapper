@@ -45,7 +45,7 @@ namespace Glass.Mapper.Tests.Pipelines.ObjectConstruction.Tasks.ObjectCachingSav
             context.ObjectCacheConfiguration.Returns(cacheConfiguration);
 
             AbstractTypeCreationContext abstractTypeCreationContext = Substitute.For<AbstractTypeCreationContext>();
-            abstractTypeCreationContext.RequestedType.Returns(type);
+            abstractTypeCreationContext.RequestedType = type;
 
             var configuration = Substitute.For<AbstractTypeConfiguration>();
             configuration.Type = type;

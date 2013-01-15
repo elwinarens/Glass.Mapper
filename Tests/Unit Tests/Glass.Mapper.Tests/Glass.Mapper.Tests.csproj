@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractServiceFixture.cs" />
+    <Compile Include="Caching\CacheInformationFixture.cs" />
     <Compile Include="Caching\CacheTableFixture.cs" />
     <Compile Include="Caching\AbstractObjectCacheFixture.cs" />
     <Compile Include="Configuration\AbstractTypeConfigurationFixture.cs" />

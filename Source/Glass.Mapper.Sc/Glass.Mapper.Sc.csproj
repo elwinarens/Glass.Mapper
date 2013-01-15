@@ -67,6 +67,7 @@
     <Compile Include="Caching\CacheKeyResolving\Implementations\SitecoreCacheKey.cs" />
     <Compile Include="Caching\CacheKeyResolving\Implementations\SitecoreCacheKeyResolver.cs" />
     <Compile Include="Caching\ObjectCacheConfiguration.cs" />
+    <Compile Include="Caching\PublishEndCacheUpdate.cs" />
     <Compile Include="Configuration\Attributes\SitecoreAttributeConfigurationLoader.cs" />
     <Compile Include="Configuration\Attributes\SitecoreChildrenAttribute.cs" />
     <Compile Include="Configuration\Attributes\SitecoreQueryAttribute.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Glass.Mapper.Caching.CacheKeyResolving;
+using Glass.Mapper.Caching.ObjectCaching.Exceptions;
 
 namespace Glass.Mapper.Caching.ObjectCaching.Implementations
 {
@@ -22,19 +23,24 @@ namespace Glass.Mapper.Caching.ObjectCaching.Implementations
         {
         }
 
-        protected override object InternalGetObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
+        protected override object InternalGetObject(string objectKey)
         {
-            return _table[base.CacheKeyResolver.GetKey(args)];
+            return _table[objectKey];
         }
 
-        protected override bool InternalContansObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
+        protected override bool InternalContansObject(string objectKey)
         {
-            return _table.ContainsKey(base.CacheKeyResolver.GetKey(args));
+            return _table.ContainsKey(objectKey);
         }
 
-        protected override void InternalAddObject(Pipelines.ObjectConstruction.ObjectConstructionArgs args)
+        protected override void InternalAddObject(string objectKey, object objectForCaching)
         {
-            _table.Add(base.CacheKeyResolver.GetKey(args), args.Result);
+            if (_table.ContainsKey(objectKey))
+            {
+                throw new DuplicatedKeyObjectCacheException("Key exists in testCache");
+            }
+
+            _table.Add(objectKey, objectForCaching);
         }
 
 
@@ -50,6 +56,12 @@ namespace Glass.Mapper.Caching.ObjectCaching.Implementations
             }
             return true;
 
+        }
+
+        protected override bool InternalRemoveObject(string objectKey)
+        {
+            _table.Remove(objectKey);
+            return !_table.ContainsKey(objectKey);
         }
     }
 }

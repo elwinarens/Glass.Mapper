@@ -88,7 +88,7 @@ namespace Glass.Mapper
 
         #endregion
 
-        public AbstractObjectCacheConfiguration ObjectCacheConfiguration { get; private set; }
+        public AbstractObjectCacheConfiguration ObjectCacheConfiguration { get; set; }
 
         /// <summary>
         /// List of the type configurations loaded by this context
