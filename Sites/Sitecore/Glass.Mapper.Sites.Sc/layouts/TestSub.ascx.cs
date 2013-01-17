@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using Glass.Mapper.Sc;
 using Glass.Mapper.Sc.Configuration.Attributes;
-using Glass.Mapper.Sc.Integration;
 using Glass.Mapper.Sites.Sc.Models;
 
 namespace Glass.Mapper.Sites.Sc.layouts

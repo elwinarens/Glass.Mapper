@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Castle.DynamicProxy;
+using Glass.Mapper.Caching;
 using Glass.Mapper.Profilers;
 
 namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
@@ -48,7 +49,7 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
                 args.ObjectOrigin = ObjectOrigin.CreateConcrete;                
             }
 
-            if (args.DisableCache || args.Context.ObjectCacheConfiguration == null)
+            if (CacheDisabler.CacheDisabled || args.Context.ObjectCacheConfiguration == null)
             {
                 args.AbortPipeline();
             }

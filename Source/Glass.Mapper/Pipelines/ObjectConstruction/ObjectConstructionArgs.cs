@@ -1,4 +1,5 @@
-﻿using Glass.Mapper.Configuration;
+﻿using Glass.Mapper.Caching.CacheKeyResolving;
+using Glass.Mapper.Configuration;
 
 namespace Glass.Mapper.Pipelines.ObjectConstruction
 {
@@ -14,13 +15,11 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction
         /// </summary>
         public AbstractTypeConfiguration Configuration { get; private set; }
 
-        
-
-        public bool DisableCache { get; internal set; }
-
         public IAbstractService Service { get; private set; }
 
         public virtual object Result { get; set; }
+
+        public ICacheKey CacheKey{ get; set; }
 
         public ObjectOrigin ObjectOrigin { get; set; }
 

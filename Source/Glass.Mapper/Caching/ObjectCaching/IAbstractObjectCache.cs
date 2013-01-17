@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Glass.Mapper.Caching.CacheKeyResolving;
 using Glass.Mapper.Pipelines.ObjectConstruction;
 
 namespace Glass.Mapper.Caching.ObjectCaching
@@ -10,6 +11,9 @@ namespace Glass.Mapper.Caching.ObjectCaching
         object GetObject(ObjectConstructionArgs args);
         bool ContansObject(ObjectConstructionArgs args);
         void AddObject(ObjectConstructionArgs args);
+        object GetObject(ICacheKey cacheKey);
+        bool ContansObject(ICacheKey cacheKey);
+        void AddObject(ICacheKey cacheKey, object objectForCaching);
         bool ClearCache();
 
         object GetFromRelatedCache<T>(string objectKey);
@@ -19,5 +23,7 @@ namespace Glass.Mapper.Caching.ObjectCaching
         bool ClearRelatedCache(string releatedKey);
         bool RemoveFromRelatedCache(string releatedKey);
         IDictionary<string, List<string>> GetRelatedKeys();
+
+        ICacheKey GetLatestCacheKey(object id);
     }
 }

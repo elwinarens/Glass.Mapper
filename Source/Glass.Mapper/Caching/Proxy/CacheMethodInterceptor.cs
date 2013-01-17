@@ -1,27 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Castle.DynamicProxy;
-using Glass.Mapper.Configuration;
+using Glass.Mapper.Caching.CacheKeyResolving;
+using Glass.Mapper.Caching.ObjectCaching;
+using Glass.Mapper.Pipelines.ObjectConstruction;
 
-namespace Glass.Mapper.ObjectCaching.Proxy
+namespace Glass.Mapper.Caching.Proxy
 {
     public class CacheMethodInterceptor : IInterceptor
     {
-        private readonly Dictionary<string, object> _values;
-        private readonly object _originalTarget;
+        private Dictionary<string, object> _values;
+        private object _originalTarget;
+        private ICacheKey _cacheKey;
 
-        public CacheMethodInterceptor(object originalTarget)
+        public static DateTime LastUpdated { get; set; }
+
+        private DateTime _lastUpdated;
+
+
+        static CacheMethodInterceptor()
+        {
+            LastUpdated = DateTime.Now;
+        }
+
+        public CacheMethodInterceptor(object originalTarget, ObjectConstructionArgs args)
         {
             _values = new Dictionary<string, object>();
-            _originalTarget = originalTarget;                
+            _originalTarget = originalTarget;
+            _lastUpdated = DateTime.Now;
+            _cacheKey = args.CacheKey;
         }
 
         #region IInterceptor Members
 
         public void Intercept(IInvocation invocation)
         {
+            if (LastUpdated > _lastUpdated)
+            {
+                var newCacheKey =
+                    Context.Default.ObjectCacheConfiguration.ObjectCache.GetLatestCacheKey(_cacheKey.GetId());
+                if (newCacheKey.Equals(_cacheKey))
+                {
+
+                    _originalTarget = Context.Default.ObjectCacheConfiguration.ObjectCache.GetObject(newCacheKey);
+                    _values = new Dictionary<string, object>();
+                    _cacheKey = newCacheKey;
+                }
+            }
+
             if (invocation.Method.IsSpecialName)
             {
                 if (invocation.Method.Name.StartsWith("get_") || invocation.Method.Name.StartsWith("set_"))

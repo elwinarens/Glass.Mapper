@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Glass.Mapper.Caching.CacheKeyResolving;
 using Glass.Mapper.Caching.ObjectCaching.Exceptions;
+using Glass.Mapper.Caching.Proxy;
 using Glass.Mapper.Pipelines.ObjectConstruction;
 using System.Linq;
 
@@ -10,9 +11,10 @@ namespace Glass.Mapper.Caching.ObjectCaching
 {
     public abstract class AbstractObjectCache<TIdType> : IAbstractObjectCache
     {
-        private readonly CacheInformation _cacheInformation = new CacheInformation();
+        private readonly CacheInformation<TIdType> _cacheInformation = new CacheInformation<TIdType>();
         public string BaseCacheKey { get; set; }
-
+        
+        
         public string DefaultBaseCacheKey
         {
             get { return "GlassObjectCahe"; }
@@ -25,7 +27,6 @@ namespace Glass.Mapper.Caching.ObjectCaching
         protected abstract bool InternalContansObject(string objectKey);
         protected abstract void InternalAddObject(string objectKey, object objectForCaching);
         protected abstract bool InternalClearCache();
-
 
         protected AbstractObjectCache(string baseCacheKey)
         {
@@ -62,6 +63,21 @@ namespace Glass.Mapper.Caching.ObjectCaching
         public void AddObject(ObjectConstructionArgs args)
         {
             InternalAddObject(CacheKeyResolver.GetKey(args).ToString(), args.Result);
+        }
+
+        public object GetObject(ICacheKey cacheKey)
+        {
+            return InternalGetObject(cacheKey.ToString());
+        }
+
+        public bool ContansObject(ICacheKey cacheKey)
+        {
+            return InternalContansObject(cacheKey.ToString());
+        }
+
+        public void AddObject(ICacheKey cacheKey, object objectForCaching)
+        {
+            InternalAddObject(cacheKey.ToString(), objectForCaching);
         }
 
         public bool ClearCache()
@@ -180,6 +196,12 @@ namespace Glass.Mapper.Caching.ObjectCaching
             _cacheInformation.RemoveObjectKey(releatedKey);
 
             return InternalRemoveObject(releatedKey);
+        }
+
+
+        public ICacheKey GetLatestCacheKey(object id)
+        {
+            return _cacheInformation.GetCacheKeys((TIdType)id).Peek();
         }
     }
 }

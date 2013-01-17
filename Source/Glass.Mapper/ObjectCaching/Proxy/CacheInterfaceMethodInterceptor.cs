@@ -1,9 +1,6 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Glass.Mapper.Proxies;
 using Castle.DynamicProxy;
+using Glass.Mapper.Proxies;
 
 namespace Glass.Mapper.ObjectCaching.Proxy
 {

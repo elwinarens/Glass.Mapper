@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Castle.DynamicProxy;
 
-namespace Glass.Mapper.ObjectCaching.Proxy
+namespace Glass.Mapper.Caching.Proxy
 {
     public class CacheProxyGeneratorHook : IProxyGenerationHook
     {

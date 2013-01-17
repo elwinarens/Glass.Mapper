@@ -142,8 +142,6 @@ namespace Glass.Mapper.Sc
 
                 Component.For<IObjectSavingTask>().ImplementedBy<StandardSavingTask>().LifestyleTransient(),
 
-
-
                 Component.For<AbstractObjectCacheConfiguration>().ImplementedBy<ObjectCacheConfiguration>().LifestyleTransient(),
                 Component.For<IAbstractObjectCache>().ImplementedBy<CacheTable<Guid>>().LifestyleTransient(),
                 Component.For<AbstractCacheKeyResolver<Guid>>().ImplementedBy<SitecoreCacheKeyResolver>().LifestyleTransient()

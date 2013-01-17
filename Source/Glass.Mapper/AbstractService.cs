@@ -16,18 +16,8 @@ namespace Glass.Mapper
 {
     public abstract class AbstractService : IAbstractService
     {
-
         private IPerformanceProfiler _profiler;
 
-        /// <summary>
-        /// The list of tasks to be performed by the Object Construction Pipeline. Called in the order specified.
-        /// </summary>
-        private IEnumerable<IObjectConstructionTask> ObjectConstructionTasks { get; set; }
-
-        /// <summary>
-        /// The list of tasks to be performed by the Object Construction Pipeline. Called in the order specified.
-        /// </summary>
-        private IEnumerable<ObjectConstructionTask> ObjectConstructionTasks { get; set; }
         public IPerformanceProfiler Profiler
         {
             get { return _profiler; }
@@ -41,9 +31,7 @@ namespace Glass.Mapper
             }
         }
 
-        public  Context GlassContext { get; private set; }
-
-       
+        public Context GlassContext { get; private set; }
 
         private TypeResolver _typeResolver;
 
@@ -52,7 +40,7 @@ namespace Glass.Mapper
         private ObjectConstruction _objectConstruction;
 
         private ObjectSaving _objectSaving;
-        
+
         public AbstractService()
             : this(Context.Default)
         {
@@ -69,17 +57,11 @@ namespace Glass.Mapper
 
 
             GlassContext = glassContext;
-            if (GlassContext == null) 
+            if (GlassContext == null)
                 throw new NullReferenceException("Context is null");
 
-            
-            ObjectConstructionTasks = glassContext.DependencyResolver.ResolveAllInOrder<ObjectConstructionTask>("Order");
-            TypeResolverTasks = glassContext.DependencyResolver.ResolveAll<ITypeResolverTask>();
-            ConfigurationResolverTasks = glassContext.DependencyResolver.ResolveAll<IConfigurationResolverTask>();
-            ObjectSavingTasks = glassContext.DependencyResolver.ResolveAll<IObjectSavingTask>();
-
-            var objectConstructionTasks = glassContext.DependencyResolver.ResolveAll<IObjectConstructionTask>();
-            _objectConstruction = new ObjectConstruction(objectConstructionTasks); 
+            var objectConstructionTasks = glassContext.DependencyResolver.ResolveAllInOrder<ObjectConstructionTask>("Order");
+            _objectConstruction = new ObjectConstruction(objectConstructionTasks);
 
             var typeResolverTasks = glassContext.DependencyResolver.ResolveAll<ITypeResolverTask>();
             _typeResolver = new TypeResolver(typeResolverTasks);
@@ -107,28 +89,17 @@ namespace Glass.Mapper
             //run the pipeline to get the configuration to load
             var configurationArgs = new ConfigurationResolverArgs(GlassContext, abstractTypeCreationContext, typeArgs.Result);
             _configurationResolver.Run(configurationArgs);
-            
+
             if (configurationArgs.Result == null)
                 throw new NullReferenceException("Configuration Resolver pipeline did not return type.");
 
             var config = configurationArgs.Result;
 
             //Run the object construction
-            _objectConstruction.Run(objectArgs);
+            var objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext, config, this);
 
-          var objectArgs = new ObjectConstructionArgs(GlassContext, abstractTypeCreationContext,
-                                                                               config, this);
-            if (DisableCache)
-            {
-                using (new CacheDisabler(objectArgs))
-                {
-                    objectRunner.Run(objectArgs);
-                }
-            }
-            else
-            {
-                objectRunner.Run(objectArgs);
-            }
+            
+            _objectConstruction.Run(objectArgs);
 
 
             return objectArgs.Result;
@@ -157,17 +128,13 @@ namespace Glass.Mapper
         /// <param name="obj"></param>
         /// <returns></returns>
         public abstract AbstractDataMappingContext CreateDataMappingContext(AbstractTypeSavingContext creationContext);
-
-
-        public bool DisableCache { get; set; }
     }
 
     public interface IAbstractService
     {
-        Context GlassContext { get;  }
+        Context GlassContext { get; }
 
         object InstantiateObject(AbstractTypeCreationContext abstractTypeCreationContext);
-        
         /// <summary>
         /// Used to create the context used by DataMappers to map data to a class
         /// </summary>
@@ -183,7 +150,5 @@ namespace Glass.Mapper
         /// <param name="creationContext">The Saving Context</param>
         /// <returns></returns>
         AbstractDataMappingContext CreateDataMappingContext(AbstractTypeSavingContext creationContext);
-
-        bool DisableCache { get; set; }
     }
 }

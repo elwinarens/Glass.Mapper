@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Glass.Mapper.Caching.CacheKeyResolving;
 using Glass.Mapper.Caching.ObjectCaching;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace Glass.Mapper.Tests.Caching
@@ -15,7 +17,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Create_CreateCacheInformation()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
 
             Assert.IsNotNull(ci);
         }
@@ -23,7 +25,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Add_Related_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Add_Related_Key";
 
             ci.AddRelatedKey(releatedKey);
@@ -34,7 +36,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Add_Related_Key_Thread_Safe()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
 
             var releatedKey = "Can_Add_Related_Key";
 
@@ -53,7 +55,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Add_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Add_Key_Related_Key";
             var key = "Can_Add_Key";
             ci.AddObjectKey(releatedKey, key);
@@ -64,7 +66,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Add_Key_Thread_Safe()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Add_Key_Related_Key";
             var key = "Can_Add_Key";
 
@@ -84,7 +86,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Does_CacheInformation_Contain_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Add_Key_Related_Key";
             var key = "Can_Add_Key";
             ci.AddObjectKey(releatedKey, key);
@@ -97,7 +99,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Does_CacheInformation_Contain_Related_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Add_Key_Related_Key";
             var key = "Can_Add_Key";
             ci.AddObjectKey(releatedKey, key);
@@ -111,7 +113,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Does_CacheInformation_Contain_Key_Thread_Safe()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Add_Key_Related_Key";
             var key = "Can_Add_Key";
             ci.AddObjectKey(releatedKey, key);
@@ -135,11 +137,11 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Test_LookUp_Time_For_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Add_Key_Related_Key";
             var key = "Can_Add_Key";
 
-            Parallel.For(0, 100000, i =>
+            Parallel.For(0, 1000, i =>
             {
                 ci.AddObjectKey(releatedKey + i, key + i);
             });
@@ -156,7 +158,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Get_Add_List_Of_Related_Keys_With_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var relatedKey1 = "Related_Key1";
             var relatedKey2 = "Related_Key2";
 
@@ -172,7 +174,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Get_List_Of_Related_Keys_From_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Add_Key_Related_Key";
 
             var key1 = "key1";
@@ -190,7 +192,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Remove_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Remove_Key_Related_Key";
             var key = "Can_Remove_Key";
             ci.AddObjectKey(releatedKey, key);
@@ -206,7 +208,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Can_Remove_Key_By_Related_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Remove_Key_Related_Key";
             var key = "Can_Remove_Key";
             ci.AddObjectKey(releatedKey, key);
@@ -221,7 +223,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Related_Key_Is_Removed_When_Remove_Key_By_Related_Key()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Remove_Key_Related_Key";
             var key = "Can_Remove_Key";
             ci.AddObjectKey(releatedKey, key);
@@ -236,7 +238,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Related_Key_Is_Removed_When_No_Keys_Are_Left()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Remove_Key_Related_Key";
             var key = "Can_Remove_Key";
             ci.AddObjectKey(releatedKey, key);
@@ -252,7 +254,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void Related_Key_Is_Removed_When_No_Keys_Are_Left_Thread_Safe()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var releatedKey = "Can_Remove_Key_Related_Key";
             var key = "Can_Remove_Key";
 
@@ -275,7 +277,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void List_Related_Key_Is_Removed_When_No_Keys_Are_Left()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var relatedKey1 = "Related_Key1";
             var relatedKey2 = "Related_Key2";
 
@@ -297,7 +299,7 @@ namespace Glass.Mapper.Tests.Caching
         [Test]
         public void List_Related_Key_Is_Removed_When_No_Keys_Are_Left_Thread_Safe()
         {
-            var ci = new CacheInformation();
+            var ci = new CacheInformation<int>();
             var relatedKey1 = "Related_Key1";
             var relatedKey2 = "Related_Key2";
 
@@ -317,10 +319,63 @@ namespace Glass.Mapper.Tests.Caching
                 Assert.IsFalse(((List<string>)ci.GetRelatedKeys()).Any(x => x == relatedKey1 + i));
                 Assert.IsFalse(((List<string>)ci.GetRelatedKeys()).Any(x => x == relatedKey2 + i));
             });
+        }
 
+        [Test]
+        public void Can_Add_CacheKey()
+        {
+            var ci = new CacheInformation<int>();
+            var id = 1;
+            var ck = Substitute.For<CacheKey<int>>(id, 1, "", typeof(StubClass));
+            ci.AddCacheKey(id, ck);
+
+            Assert.IsTrue(ci.ContainsCacheKey(id, ck));
+        }
+
+        [Test]
+        public void Can_Add_CacheKey_Thread_Safe()
+        {
+            var ci = new CacheInformation<int>();
+            Parallel.For(0, 10000, i =>
+                {
+                    var id = i;
+                    var ck = Substitute.For<CacheKey<int>>(id, i, "", typeof (StubClass));
+                    ci.AddCacheKey(id, ck);
+
+                    Assert.IsTrue(ci.ContainsCacheKey(id, ck));
+                });
+        }
+
+
+        [Test]
+        public void Can_Get_CacheKey()
+        {
+            var ci = new CacheInformation<int>();
+            var id = 1;
+            var ck = Substitute.For<CacheKey<int>>(id, 1, "", typeof(StubClass));
+            ci.AddCacheKey(id, ck);
+
+            Assert.IsTrue(ci.ContainsCacheKey(id, ck));
+            Assert.AreEqual(ck, ci.GetCacheKeys(id).First());
+        }
+
+
+        #region Stubs
+
+        public class StubClass
+        {
+
+            public string MyProperty { get; set; }
+        }
+
+        public interface IStubInterface
+        {
 
         }
 
 
+
+
+        #endregion
     }
 }

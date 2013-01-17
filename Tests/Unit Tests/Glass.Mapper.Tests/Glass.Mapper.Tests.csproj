@@ -70,6 +70,7 @@
     <Compile Include="Caching\CacheInformationFixture.cs" />
     <Compile Include="Caching\CacheTableFixture.cs" />
     <Compile Include="Caching\AbstractObjectCacheFixture.cs" />
+    <Compile Include="Caching\ProxiesFixture.cs" />
     <Compile Include="Configuration\AbstractTypeConfigurationFixture.cs" />
     <Compile Include="Configuration\Attributes\AttributeConfigurationLoaderFixture.cs" />
     <Compile Include="Configuration\Attributes\AbstractClassAttributeFixture.cs" />

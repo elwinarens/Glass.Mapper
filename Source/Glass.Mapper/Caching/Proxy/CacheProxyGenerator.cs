@@ -2,6 +2,7 @@
 using System.Linq;
 using Castle.DynamicProxy;
 using Glass.Mapper.ObjectCaching.Proxy;
+using Glass.Mapper.Pipelines.ObjectConstruction;
 using Glass.Mapper.Proxies;
 
 namespace Glass.Mapper.Caching.Proxy
@@ -9,15 +10,13 @@ namespace Glass.Mapper.Caching.Proxy
 
     public class CacheProxyGenerator
     {
-        private static readonly ProxyGenerator _generator = new ProxyGenerator();
-        private static readonly ProxyGenerationOptions _options = new ProxyGenerationOptions(new CacheProxyGeneratorHook());
+        private static readonly ProxyGenerator Generator = new ProxyGenerator();
+        private static readonly ProxyGenerationOptions Options = new ProxyGenerationOptions(new CacheProxyGeneratorHook());
 
 
-        public static object CreateProxy(object originalTarget)
+        public static object CreateProxy(object originalTarget, ObjectConstructionArgs args)
         {
             Type type = originalTarget.GetType();
-
-            object proxy = null ;
 
             //you can't proxy a proxy.
             if (originalTarget is IProxyTargetAccessor)
@@ -28,23 +27,14 @@ namespace Glass.Mapper.Caching.Proxy
                 {
                     var subInterceptor = interceptors.First(x => x is InterfaceMethodInterceptor).CastTo<InterfaceMethodInterceptor>();
 
-                    return _generator.CreateInterfaceProxyWithoutTarget(
+                    return Generator.CreateInterfaceProxyWithoutTarget(
                         type,
                         new CacheInterfaceMethodInterceptor(subInterceptor));
                         
                 }
-                else if (interceptors.Any(x => x is ProxyClassInterceptor))
-                {
-
-                }
-
+                return oldProxy;
             }
-            else
-            {
-                proxy = _generator.CreateClassProxy(type, _options, new CacheMethodInterceptor(originalTarget));
-            }
-
-            return proxy;
+            return Generator.CreateClassProxy(type, Options, new CacheMethodInterceptor(originalTarget, args));
         }
     }
 }

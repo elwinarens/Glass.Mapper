@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Glass.Mapper.Caching;
 
 namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
 {
@@ -24,7 +25,10 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateConcrete
             if (_actual == null)
             {
                 _args.AbstractTypeCreationContext.IsLazy = false;
-                _actual = _args.Service.InstantiateObject(_args.AbstractTypeCreationContext);
+                using (new CacheDisabler())
+                {
+                    _actual = _args.Service.InstantiateObject(_args.AbstractTypeCreationContext);
+                }
             }
 
             invocation.ReturnValue = invocation.Method.Invoke(_actual, invocation.Arguments);

@@ -28,5 +28,11 @@ namespace Glass.Mapper.Caching.CacheKeyResolving
         }
 
         public abstract bool Equals(CacheKey<TIdType> other);
+
+
+        public object GetId()
+        {
+            return Id;
+        }
     }
 }

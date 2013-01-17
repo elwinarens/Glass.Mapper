@@ -53,6 +53,7 @@ namespace Glass.Mapper
         /// <summary>
         /// Creates a new context and adds it to the Contexts dictionary.
         /// </summary>
+        /// <param name="glassConfig"></param>
         /// <param name="contextName">The context name, used as the key in the Contexts dictionary.</param>
         /// <param name="isDefault">Indicates if this is the default context. If it is the context is assigned to the Default static property.</param>
         /// <returns></returns>
@@ -66,12 +67,19 @@ namespace Glass.Mapper
             context.DependencyResolver = ResolverFactory.GetResolver();
             context.DependencyResolver.Load(contextName, glassConfig);
 
-            context.ObjectCacheConfiguration = context.DependencyResolver.TryResolve<AbstractObjectCacheConfiguration>();
-
             Contexts[contextName] = context;
 
             if (isDefault)
                 Default = context;
+
+            context.ObjectCacheConfiguration =
+                context.DependencyResolver.TryResolve<AbstractObjectCacheConfiguration>(new Dictionary<string, object>
+                    {
+                        {
+                            "glassContext",
+                            context
+                        }
+                    });
 
             return context;
         }

@@ -79,7 +79,7 @@
     <Compile Include="Caching\ObjectCaching\Exceptions\KeyNullOrEmptyObjectCacheException.cs" />
     <Compile Include="Caching\ObjectCaching\ReaderWriterLock.cs" />
     <Compile Include="Caching\ObjectCaching\Exceptions\ReleatedTemplateIDNullOrEmptyObjectCacheException.cs" />
-    <Compile Include="Caching\Proxy\CacheInterfaceMethodInterceptor.cs" />
+    <Compile Include="Caching\Proxy\CacheLazyObjectInterceptor.cs" />
     <Compile Include="Caching\Proxy\CacheMethodInterceptor.cs" />
     <Compile Include="Caching\Proxy\CacheProxyGenerator.cs" />
     <Compile Include="Caching\Proxy\CacheProxyGeneratorHook.cs" />
@@ -117,6 +117,7 @@
     <Compile Include="IDependencyResolverFactory.cs" />
     <Compile Include="IDependencyResolver.cs" />
     <Compile Include="IGlassConfiguration.cs" />
+    <Compile Include="ObjectCaching\Proxy\CacheInterfaceMethodInterceptor.cs" />
     <Compile Include="Profilers\IPerformanceProfiler.cs" />
     <Compile Include="LazyEnumerable.cs" />
     <Compile Include="MapperException.cs" />

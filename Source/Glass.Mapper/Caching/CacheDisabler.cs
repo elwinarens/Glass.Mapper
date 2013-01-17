@@ -1,32 +1,66 @@
 ﻿using System;
+using System.Web;
 using Glass.Mapper.Pipelines.ObjectConstruction;
 
 namespace Glass.Mapper.Caching
 {
     public class CacheDisabler:IDisposable
     {
-        private readonly ObjectConstructionArgs _args;
-        private readonly IAbstractService _abstractService;
 
-        public CacheDisabler(ObjectConstructionArgs args)
+        public static bool CacheDisabled
         {
-            this._args = args;
-            args.DisableCache = true;
+            get
+            {
+                return HttpContext.Current != null ? ReturnFromHttpContxt() : ReturnFromThreadStatic();
+            }
+            set
+            {
+                if (HttpContext.Current != null)
+                {
+                    SetToHttpContext(value);
+                }
+
+                SetToThreadStatic(value);
+            }
         }
 
-        public CacheDisabler(IAbstractService abstractService)
+        private static void SetToHttpContext(bool value)
         {
-            this._abstractService = abstractService;
-            _abstractService.DisableCache = true;
+            HttpContext.Current.Items["Glass_CacheDisabled"] = value;
+        }
+
+        private static bool ReturnFromHttpContxt()
+        {
+            if (HttpContext.Current.Items.Contains("Glass_CacheDisabled"))
+            {
+                {
+                    return (bool)HttpContext.Current.Items["Glass_CacheDisabled"];
+                }
+            }
+            return false;
+        }
+
+        [ThreadStatic]
+        private static bool _threadStaticCacheDisabled;
+
+        private static void SetToThreadStatic(bool value)
+        {
+            _threadStaticCacheDisabled = value;
+        }
+
+        private static bool ReturnFromThreadStatic()
+        {
+            return _threadStaticCacheDisabled;
+        }
+
+        public CacheDisabler()
+        {
+            CacheDisabled = true;
         }
 
         public void Dispose()
         {
-            if(_args != null)
-            _args.DisableCache = false;
-
-            if(_abstractService != null)
-                _abstractService.DisableCache = false;
+            CacheDisabled = false;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Castle.DynamicProxy;
+using Glass.Mapper.Caching;
 
 namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateInterface
 {
@@ -33,7 +34,11 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.CreateInterface
             {
                 args.Result = _generator.CreateInterfaceProxyWithoutTarget(args.Configuration.Type, new InterfacePropertyInterceptor(args));
                 args.ObjectOrigin = ObjectOrigin.CreateInterface;
-                args.AbortPipeline();
+
+                if (CacheDisabler.CacheDisabled || args.Context.ObjectCacheConfiguration == null)
+                {
+                    args.AbortPipeline();
+                }
             }
         }
     }
