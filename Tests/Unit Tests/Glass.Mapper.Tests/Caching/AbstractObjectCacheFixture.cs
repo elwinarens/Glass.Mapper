@@ -211,15 +211,15 @@ namespace Glass.Mapper.Tests.Caching
 
             objectCache.AddToRelatedCache(key, templateStrings, test);
 
-            Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.AreEqual(test, objectCache.GetFromRelatedCache(key));
             Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0]));
-            Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(key) == null);
+            Assert.IsTrue(objectCache.GetFromRelatedCache(key) == null);
 
             objectCache.AddToRelatedCache(key, templateStrings, test);
 
-            Assert.AreEqual(objectCache.GetFromRelatedCache<StubClass>(key), test);
+            Assert.AreEqual(objectCache.GetFromRelatedCache(key), test);
             Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[1]));
-            Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(key) == null);
+            Assert.IsTrue(objectCache.GetFromRelatedCache(key) == null);
         }
 
 
@@ -245,15 +245,15 @@ namespace Glass.Mapper.Tests.Caching
 
                     objectCache.AddToRelatedCache(localKey, templateStrings, test);
 
-                    Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.AreEqual(test, objectCache.GetFromRelatedCache(localKey));
                     Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0]));
-                    Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(localKey ) == null);
+                    Assert.IsTrue(objectCache.GetFromRelatedCache(localKey ) == null);
 
                     objectCache.AddToRelatedCache(localKey, templateStrings, test);
 
-                    Assert.AreEqual(objectCache.GetFromRelatedCache<StubClass>(localKey), test);
+                    Assert.AreEqual(objectCache.GetFromRelatedCache(localKey), test);
                     Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[1]));
-                    Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(localKey) == null);
+                    Assert.IsTrue(objectCache.GetFromRelatedCache(localKey) == null);
                 }
             });
         }
@@ -280,10 +280,10 @@ namespace Glass.Mapper.Tests.Caching
             objectCache.AddToRelatedCache(key, templateStrings, test);
             objectCache.AddToRelatedCache(key2, templateStrings, test2);
 
-            Assert.AreEqual(objectCache.GetFromRelatedCache<StubClass>(key), test);
+            Assert.AreEqual(objectCache.GetFromRelatedCache(key), test);
             Assert.IsTrue(objectCache.ClearRelatedCache(templateStrings[0]));
-            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key));
-            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key2));
+            Assert.IsNull(objectCache.GetFromRelatedCache(key));
+            Assert.IsNull(objectCache.GetFromRelatedCache(key2));
         }
 
 
@@ -316,8 +316,8 @@ namespace Glass.Mapper.Tests.Caching
 
             Assert.IsNotNull(objectCache.GetRelatedKeys());
 
-            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key));
-            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key2));
+            Assert.IsNull(objectCache.GetFromRelatedCache(key));
+            Assert.IsNull(objectCache.GetFromRelatedCache(key2));
 
         }
 
@@ -337,9 +337,9 @@ namespace Glass.Mapper.Tests.Caching
 
             objectCache.AddToRelatedCache(key, templateString, test);
 
-            Assert.AreEqual(objectCache.GetFromRelatedCache<StubClass>(key), test);
+            Assert.AreEqual(objectCache.GetFromRelatedCache(key), test);
             Assert.IsTrue(objectCache.ClearRelatedCache(templateString));
-            Assert.IsTrue(objectCache.GetFromRelatedCache<StubClass>(key) == null);
+            Assert.IsTrue(objectCache.GetFromRelatedCache(key) == null);
         }
 
         [Test]
@@ -364,9 +364,9 @@ namespace Glass.Mapper.Tests.Caching
 
                     objectCache.AddToRelatedCache(localKey, localtemplateString, test);
 
-                    Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.AreEqual(test, objectCache.GetFromRelatedCache(localKey));
                     Assert.IsTrue(objectCache.ClearRelatedCache(localtemplateString));
-                    Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.IsNull(objectCache.GetFromRelatedCache(localKey));
                 }
             });
         }
@@ -387,7 +387,7 @@ namespace Glass.Mapper.Tests.Caching
 
             objectCache.AddToRelatedCache(key, templateString, test);
 
-            Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.AreEqual(test, objectCache.GetFromRelatedCache(key));
         }
 
         [Test]
@@ -411,7 +411,7 @@ namespace Glass.Mapper.Tests.Caching
 
                     objectCache.AddToRelatedCache(localKey, templateString, test);
 
-                    Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.AreEqual(test, objectCache.GetFromRelatedCache(localKey));
                 }
             });
         }
@@ -433,11 +433,11 @@ namespace Glass.Mapper.Tests.Caching
 
             objectCache.AddToRelatedCache(key, templateString, test);
 
-            Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.AreEqual(test, objectCache.GetFromRelatedCache(key));
 
             objectCache.RemoveFromRelatedCache(key);
 
-            Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.IsNull(objectCache.GetFromRelatedCache(key));
             Assert.IsNotNull(objectCache.GetRelatedKeys());
             Assert.IsFalse(objectCache.GetRelatedKeys().ContainsKey(templateString));
         }
@@ -464,11 +464,11 @@ namespace Glass.Mapper.Tests.Caching
 
                     objectCache.AddToRelatedCache(localKey, templateString, test);
 
-                    Assert.AreEqual(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.AreEqual(test, objectCache.GetFromRelatedCache(localKey));
 
                     objectCache.RemoveFromRelatedCache(localKey);
 
-                    Assert.IsNull(objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.IsNull(objectCache.GetFromRelatedCache(localKey));
                 }
             });
         }
@@ -531,7 +531,7 @@ namespace Glass.Mapper.Tests.Caching
 
             objectCache.AddToRelatedCache(key, templateString, test);
 
-            Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.AreSame(test, objectCache.GetFromRelatedCache(key));
             Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
             Assert.IsTrue(objectCache.ClearRelatedCache(templateString));
@@ -557,14 +557,14 @@ namespace Glass.Mapper.Tests.Caching
 
             objectCache.AddToRelatedCache(key, templateString, test);
 
-            Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.AreSame(test, objectCache.GetFromRelatedCache(key));
             Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
             Assert.IsTrue(objectCache.ClearRelatedCache(templateString));
 
             objectCache.AddToRelatedCache(key, templateString, test);
 
-            Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.AreSame(test, objectCache.GetFromRelatedCache(key));
             Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
         }
@@ -591,14 +591,14 @@ namespace Glass.Mapper.Tests.Caching
 
                     objectCache.AddToRelatedCache(localKey, templateString, test);
 
-                    Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.AreSame(test, objectCache.GetFromRelatedCache(localKey));
                     Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
 
                     Assert.IsTrue(objectCache.ClearRelatedCache(templateString));
 
                     objectCache.AddToRelatedCache(localKey, templateString, test);
 
-                    Assert.AreSame(test, objectCache.GetFromRelatedCache<StubClass>(localKey));
+                    Assert.AreSame(test, objectCache.GetFromRelatedCache(localKey));
                     Assert.IsTrue(objectCache.GetRelatedKeys().Any(x => x.Key == templateString));
                 });
 
@@ -639,7 +639,7 @@ namespace Glass.Mapper.Tests.Caching
             var list = new List<string>() {"1", "2", "3", "4", "5"};
 
             objectCache.AddToRelatedCache(key, templateString, list);
-            Assert.AreEqual(list, objectCache.GetFromRelatedCache<StubClass>(key));
+            Assert.AreEqual(list, objectCache.GetFromRelatedCache(key));
         }
 
         #region Stubs

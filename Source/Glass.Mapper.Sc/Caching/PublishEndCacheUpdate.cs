@@ -28,7 +28,7 @@ namespace Glass.Mapper.Sc.Caching
             
             var publisher = sitecoreEventArgs.Parameters[0] as Publisher;
             
-            if (publisher != null) this.CacheWorker(publisher.Options.TargetDatabase);
+            if (publisher != null) CacheWorker(publisher.Options.TargetDatabase);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Glass.Mapper.Sc.Caching
                 foreach (var entry in entries)
                 {
                     //get the item action log string
-                    String logString = String.Format("{0}-{1}", entry.ItemId, entry.Action);
+                    var logString = String.Format("{0}-{1}", entry.ItemId, entry.Action);
 
                     //we only want to process save and delete events
                     //updates are also processed as a save event
@@ -82,7 +82,7 @@ namespace Glass.Mapper.Sc.Caching
                     if (item == null) continue;
                     
                     var templaetId = item.TemplateID.ToString();
-                    if (!templateList.Any(x => x == templaetId))
+                    if (templateList.All(x => x != templaetId))
                         templateList.Add(templaetId);
                 }
 

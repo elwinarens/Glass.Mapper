@@ -13,9 +13,19 @@ namespace Glass.Mapper.Sc.DataMappers
     public class SitecoreFieldIEnumerableMapper : AbstractSitecoreFieldMapper
     {
         public AbstractSitecoreFieldMapper Mapper { get; private set; }
-
+        
         public override object GetFieldValue(string fieldValue, SitecoreFieldConfiguration config, SitecoreDataMappingContext context)
         {
+            if (context != null && context.Service.GlassContext.ObjectCacheConfiguration != null)
+            {
+                var cacheKey = config.FieldName + context.Item.ID.Guid.ToString();
+                var returnList = context.Service.GlassContext.ObjectCacheConfiguration.ObjectCache.GetFromRelatedCache(cacheKey);
+                if (returnList != null)
+                {
+                    return returnList;
+                }
+            }
+
             Type type = config.PropertyInfo.PropertyType;
             //Get generic type
             Type pType = Utilities.GetGenericArgument(type);
@@ -33,6 +43,12 @@ namespace Glass.Mapper.Sc.DataMappers
             {
                 if(item != null)
                     list.Add(item);
+            }
+
+            if (context != null && context.Service.GlassContext.ObjectCacheConfiguration != null)
+            {
+                var cacheKey = config.FieldName + context.Item.ID.Guid.ToString();
+                context.Service.GlassContext.ObjectCacheConfiguration.ObjectCache.AddToRelatedCache(cacheKey, "", list);
             }
 
             return list;

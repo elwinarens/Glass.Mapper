@@ -336,7 +336,7 @@ namespace Glass.Mapper.Tests.Caching
         public void Can_Add_CacheKey_Thread_Safe()
         {
             var ci = new CacheInformation<int>();
-            Parallel.For(0, 10000, i =>
+            Parallel.For(0, 1000, i =>
                 {
                     var id = i;
                     var ck = Substitute.For<CacheKey<int>>(id, i, "", typeof (StubClass));

@@ -16,7 +16,7 @@ namespace Glass.Mapper.Caching.ObjectCaching
         void AddObject(ICacheKey cacheKey, object objectForCaching);
         bool ClearCache();
 
-        object GetFromRelatedCache<T>(string objectKey);
+        object GetFromRelatedCache(string objectKey);
         bool RelatedCacheContansObject(string objectKey);
         void AddToRelatedCache(string objectKey, IEnumerable<string> releatedKeys, object objectForCaching);
         void AddToRelatedCache(string objectKey, string releatedKey, object objectForCaching);

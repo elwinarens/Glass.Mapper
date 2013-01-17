@@ -39,7 +39,7 @@ namespace Glass.Mapper.Caching.Proxy
             {
                 var newCacheKey =
                     Context.Default.ObjectCacheConfiguration.ObjectCache.GetLatestCacheKey(_cacheKey.GetId());
-                if (newCacheKey.Equals(_cacheKey))
+                if (!newCacheKey.Equals(_cacheKey))
                 {
 
                     _originalTarget = Context.Default.ObjectCacheConfiguration.ObjectCache.GetObject(newCacheKey);

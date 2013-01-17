@@ -77,6 +77,7 @@ namespace Glass.Mapper.Caching.ObjectCaching
 
         public void AddObject(ICacheKey cacheKey, object objectForCaching)
         {
+            _cacheInformation.AddCacheKey((TIdType)cacheKey.GetId(), (CacheKey<TIdType>)cacheKey);
             InternalAddObject(cacheKey.ToString(), objectForCaching);
         }
 
@@ -125,7 +126,7 @@ namespace Glass.Mapper.Caching.ObjectCaching
             InternalAddObject(objectKey, objectForCaching);
         }
 
-        public object GetFromRelatedCache<T>(string objectKey)
+        public object GetFromRelatedCache(string objectKey)
         {
             return InternalGetObject(objectKey);
         }
