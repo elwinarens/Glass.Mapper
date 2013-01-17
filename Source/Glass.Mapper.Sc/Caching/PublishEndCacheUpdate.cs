@@ -62,7 +62,7 @@ namespace Glass.Mapper.Sc.Caching
             var entries = HistoryManager.GetHistory(database, startTime, endTime);
             if (entries.Count > 0)
             {
-                var templateList = new List<string>();
+                var relatedKeyList = new List<string>();
                 var cache = Context.Default.ObjectCacheConfiguration.ObjectCache;
 
                 foreach (var entry in entries)
@@ -82,15 +82,19 @@ namespace Glass.Mapper.Sc.Caching
                     if (item == null) continue;
                     
                     var templaetId = item.TemplateID.ToString();
-                    if (templateList.All(x => x != templaetId))
-                        templateList.Add(templaetId);
+                    if (relatedKeyList.All(x => x != templaetId))
+                        relatedKeyList.Add(templaetId);
+
+                    relatedKeyList.Add(item.ID + "SitecoreFieldIEnumerableMapper");
                 }
 
                 //clear the related caches after the index has finished updating
-                foreach (var teamplet in templateList)
+                foreach (var teamplet in relatedKeyList)
                 {
                     cache.ClearRelatedCache(teamplet);
                 }
+
+                
             }
 
             //update the last update time

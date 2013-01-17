@@ -48,7 +48,7 @@ namespace Glass.Mapper.Sc.DataMappers
             if (context != null && context.Service.GlassContext.ObjectCacheConfiguration != null)
             {
                 var cacheKey = config.FieldName + context.Item.ID.Guid.ToString();
-                context.Service.GlassContext.ObjectCacheConfiguration.ObjectCache.AddToRelatedCache(cacheKey, "", list);
+                context.Service.GlassContext.ObjectCacheConfiguration.ObjectCache.AddToRelatedCache(cacheKey, context.Item.ID + "SitecoreFieldIEnumerableMapper", list);
             }
 
             return list;
