@@ -16,8 +16,10 @@ namespace Glass.Mapper.Pipelines.ObjectConstruction.Tasks.ObjectCachingResolver
             if (args.Context.ObjectCacheConfiguration == null) return;
 
             if (!args.Context.ObjectCacheConfiguration.ObjectCache.ContansObject(args)) return;
-
+            //args.Result = args.Context.ObjectCacheConfiguration.ObjectCache.GetObject(args);
             args.Result = CacheProxyGenerator.CreateProxy(args.Context.ObjectCacheConfiguration.ObjectCache.GetObject(args), args);
+
+
             args.ObjectOrigin = ObjectOrigin.ObjectCachingResolver;
             args.AbortPipeline();
         }

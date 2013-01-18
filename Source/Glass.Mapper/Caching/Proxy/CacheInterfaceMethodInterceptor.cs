@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Castle.DynamicProxy;
 using Glass.Mapper.Proxies;
 
-namespace Glass.Mapper.ObjectCaching.Proxy
+namespace Glass.Mapper.Caching.Proxy
 {
     public class CacheInterfaceMethodInterceptor : IInterceptor
     {

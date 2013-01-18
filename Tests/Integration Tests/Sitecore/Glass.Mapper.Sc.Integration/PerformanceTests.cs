@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Glass.Mapper.Caching;
 using Glass.Mapper.Profilers;
 using Glass.Mapper.Sc.Configuration;
 using Glass.Mapper.Sc.Configuration.Attributes;
@@ -67,7 +68,7 @@ namespace Glass.Mapper.Sc.Integration
         [Test]
         [Timeout(120000)]
         [Repeat(10000)]
-        public void GetItems(
+        public void GetItem(
             [Values(1000, 10000, 50000)] int count
             )
         {
@@ -95,6 +96,39 @@ namespace Glass.Mapper.Sc.Integration
             Console.WriteLine("Preformance Test Count: {0} Ratio: {1}".Formatted(count, total));
         }
 
+        [Test]
+        [Timeout(120000)]
+        [Repeat(10000)]
+        public void GetItemsNoCache(
+            [Values(1000, 10000, 50000)] int count
+            )
+        {
+            using (new CacheDisabler())
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    _glassWatch.Reset();
+                    _rawWatch.Reset();
+
+                    _rawWatch.Start();
+                    var rawItem = _db.GetItem(new ID(_id));
+                    var value1 = rawItem["Field"];
+                    _rawWatch.Stop();
+                    _rawTotal = _rawWatch.ElapsedTicks;
+
+                    _glassWatch.Start();
+                    var glassItem = _service.GetItem<StubClass>(_id);
+                    var value2 = glassItem.Field;
+                    _glassWatch.Stop();
+                    _glassTotal = _glassWatch.ElapsedTicks;
+
+                }
+
+                double total = _glassTotal/_rawTotal;
+                Console.WriteLine("Preformance Test Count: {0} Ratio: {1}".Formatted(count, total));
+            }
+        }
+
         #region Stubs
 
         [SitecoreType]
@@ -102,6 +136,9 @@ namespace Glass.Mapper.Sc.Integration
         {
             [SitecoreField(Setting = SitecoreFieldSettings.RichTextRaw)]
             public virtual string Field { get; set; }
+
+            [SitecoreField("Field")]
+            public virtual string Field1 { get; set; }
 
             [SitecoreId]
             public virtual Guid Id { get; set; }

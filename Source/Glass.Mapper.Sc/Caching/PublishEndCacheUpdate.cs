@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Glass.Mapper.Caching.Proxy;
 using Sitecore.Data.Managers;
 using Sitecore.Data;
 using Sitecore;
@@ -63,6 +64,7 @@ namespace Glass.Mapper.Sc.Caching
             if (entries.Count > 0)
             {
                 var relatedKeyList = new List<string>();
+                
                 var cache = Context.Default.ObjectCacheConfiguration.ObjectCache;
 
                 foreach (var entry in entries)
@@ -70,12 +72,12 @@ namespace Glass.Mapper.Sc.Caching
                     //get the item action log string
                     var logString = String.Format("{0}-{1}", entry.ItemId, entry.Action);
 
-                    //we only want to process save and delete events
-                    //updates are also processed as a save event
-                    if (!performedActions.Contains(logString) && (entry.Action == HistoryAction.Deleted || entry.Action == HistoryAction.Saved))
-                    {
-                        performedActions.Add(logString);
-                    }
+                    ////we only want to process save and delete events
+                    ////updates are also processed as a save event
+                    //if (!performedActions.Contains(logString) && (entry.Action == HistoryAction.Deleted || entry.Action == HistoryAction.Saved))
+                    //{
+                    //    performedActions.Add(logString);
+                    //}
 
                     var item = database.GetItem(entry.ItemId);
 
@@ -99,6 +101,7 @@ namespace Glass.Mapper.Sc.Caching
 
             //update the last update time
             database.Properties[LastUpdate + Environment.MachineName] = DateUtil.ToIsoDate(endTime, true);
+            CacheMethodInterceptor.LastUpdated = DateTime.Now;
         }
 
         private static DateTime LastUpdateTime(Database database)
