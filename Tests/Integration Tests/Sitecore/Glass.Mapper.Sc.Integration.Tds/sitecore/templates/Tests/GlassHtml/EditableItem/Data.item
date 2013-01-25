@@ -1,18 +1,18 @@
 ----item----
 version: 1
-id: {D1F23496-967C-4017-A358-06F1F3B29E9C}
+id: {A8C4BB2B-23CB-4BCF-9EEB-6A80EE541CFB}
 database: master
-path: /sitecore/content/Tests/SitecoreService/CreateClass
-parent: {026DE38A-562B-4F54-B913-0CDF9122934D}
-name: CreateClass
+path: /sitecore/templates/Tests/GlassHtml/EditableItem/Data
+parent: {47A18B96-5762-4879-8F19-A63AB4EA2332}
+name: Data
 master: {00000000-0000-0000-0000-000000000000}
-template: {A87A00B1-E6DB-45AB-8B54-636FEC3B5523}
-templatekey: Folder
+template: {E269FBB5-3750-427A-9149-7AA950B49301}
+templatekey: Template section
 
 ----version----
 language: en
 version: 1
-revision: ab7b160a-201b-4e75-b6c1-893a17bc93e1
+revision: 0340f1da-06b3-4f04-8d50-bf741df8151f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -20,7 +20,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20130101T141745
+20130119T094010
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -34,14 +34,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ab7b160a-201b-4e75-b6c1-893a17bc93e1
+0340f1da-06b3-4f04-8d50-bf741df8151f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130101T141748:634926466688352529
+20130119T094010:634941852108900361
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

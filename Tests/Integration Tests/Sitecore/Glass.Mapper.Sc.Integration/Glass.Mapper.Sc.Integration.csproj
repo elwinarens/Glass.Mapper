@@ -61,6 +61,9 @@
     <Reference Include="Sitecore.Analytics">
       <HintPath>..\..\..\..\Depends\Sitecore\bin\Sitecore.Analytics.dll</HintPath>
     </Reference>
+    <Reference Include="Sitecore.Client">
+      <HintPath>..\..\..\..\Depends\Sitecore\bin\Sitecore.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Kernel">
       <HintPath>..\..\..\..\Depends\Sitecore\bin\Sitecore.Kernel.dll</HintPath>
     </Reference>
@@ -77,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuation\Fluent\FluentGeneralFixture.cs" />
     <Compile Include="ConnectionFixture.cs" />
     <Compile Include="DataMappers\AbstractMapperFixture.cs" />
     <Compile Include="DataMappers\AbstractSitecoreFieldMapperFixture.cs" />
@@ -111,6 +115,7 @@
     <Compile Include="DataMappers\SitecoreQueryParameters\ItemIdNoBracketsParameterFixture.cs" />
     <Compile Include="DataMappers\SitecoreQueryParameters\ItemIdParameterFixture.cs" />
     <Compile Include="DataMappers\SitecoreQueryParameters\ItemPathParameterFixture.cs" />
+    <Compile Include="GlassHtmlFixture.cs" />
     <Compile Include="PerformanceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\SitecoreTypeFieldHandler.cs" />
