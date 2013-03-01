@@ -37,7 +37,7 @@
     <OutputPath>.\Release\</OutputPath>
     <RecursiveDeployAction>Ignore</RecursiveDeployAction>
   </PropertyGroup>
-   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>.\Debug\</OutputPath>
     <RecursiveDeployAction>Ignore</RecursiveDeployAction>
@@ -46,7 +46,7 @@
     <SitecoreAccessGuid>fd21ce01-25b5-4388-a335-6211a7a211b9</SitecoreAccessGuid>
     <InstallSitecoreConnector>True</InstallSitecoreConnector>
   </PropertyGroup>
- <PropertyGroup Condition=" '$(Configuration)' == 'Debug - Aaron' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug - Aaron' ">
     <DebugSymbols>true</DebugSymbols>
     <RecursiveDeployAction>Ignore</RecursiveDeployAction>
     <SitecoreDeployFolder>C:\Git\Glass.Mapper\Tests\Integration Tests\Sitecore\Glass.Mapper.Sc.Integration</SitecoreDeployFolder>
