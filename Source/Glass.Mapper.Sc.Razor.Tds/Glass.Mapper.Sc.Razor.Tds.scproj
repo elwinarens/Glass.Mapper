@@ -38,7 +38,7 @@
     </PackageVersion>
     <PackageReadme>
     </PackageReadme>
-    <SitecoreAssemblyPath>E:\Glass\Glass.Mapper\Depends\Sitecore\bin</SitecoreAssemblyPath>
+    <SitecoreAssemblyPath>..\..\Depends\Sitecore\bin</SitecoreAssemblyPath>
     <GeneratePackage>True</GeneratePackage>
     <SeperateFilesAndItems>False</SeperateFilesAndItems>
     <AddDateTimeToPackageName>False</AddDateTimeToPackageName>
